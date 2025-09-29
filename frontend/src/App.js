@@ -1,53 +1,192 @@
-import { useEffect } from "react";
-import "@/App.css";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import axios from "axios";
+import React, { useState, useEffect } from 'react';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import axios from 'axios';
+import { Toaster } from './components/ui/sonner';
+import { toast } from 'sonner';
+import '@/App.css';
+
+// Pages
+import Auth from './pages/Auth';
+import Dashboard from './pages/Dashboard';
+import Room from './pages/Room';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 
-const Home = () => {
-  const helloWorldApi = async () => {
-    try {
-      const response = await axios.get(`${API}/`);
-      console.log(response.data.message);
-    } catch (e) {
-      console.error(e, `errored out requesting / api`);
-    }
-  };
+// Auth Context
+const AuthContext = React.createContext(null);
 
-  useEffect(() => {
-    helloWorldApi();
-  }, []);
+export const useAuth = () => {
+  const context = React.useContext(AuthContext);
+  if (!context) {
+    throw new Error('useAuth must be used within AuthProvider');
+  }
+  return context;
+};
 
-  return (
-    <div>
-      <header className="App-header">
-        <a
-          className="App-link"
-          href="https://emergent.sh"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <img src="https://avatars.githubusercontent.com/in/1201222?s=120&u=2686cf91179bbafbc7a71bfbc43004cf9ae1acea&v=4" />
-        </a>
-        <p className="mt-5">Building something incredible ~!</p>
-      </header>
-    </div>
-  );
+// API Service
+export const api = {
+  // Auth
+  register: async (userData) => {
+    const response = await axios.post(`${API}/auth/register`, userData);
+    return response.data;
+  },
+  login: async (credentials) => {
+    const response = await axios.post(`${API}/auth/login`, credentials);
+    return response.data;
+  },
+  
+  // Songs  
+  searchSong: async (songData, token) => {
+    const response = await axios.post(`${API}/songs/search`, songData, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    return response.data;
+  },
+  getSong: async (songId, token) => {
+    const response = await axios.get(`${API}/songs/${songId}`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    return response.data;
+  },
+  getInstrumentNotation: async (songId, instrument, token) => {
+    const response = await axios.get(`${API}/songs/${songId}/notation/${instrument}`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    return response.data;
+  },
+  
+  // Rooms
+  createRoom: async (roomData, token) => {
+    const response = await axios.post(`${API}/rooms/create`, roomData, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    return response.data;
+  },
+  joinRoom: async (joinData, token) => {
+    const response = await axios.post(`${API}/rooms/join`, joinData, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    return response.data;
+  },
+  getRoom: async (roomId, token) => {
+    const response = await axios.get(`${API}/rooms/${roomId}`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    return response.data;
+  },
+  setCurrentSong: async (roomId, songId, token) => {
+    const response = await axios.post(`${API}/rooms/${roomId}/set-current-song?song_id=${songId}`, {}, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    return response.data;
+  },
+  setNextSong: async (roomId, songId, token) => {
+    const response = await axios.post(`${API}/rooms/${roomId}/set-next-song?song_id=${songId}`, {}, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    return response.data;
+  },
+  
+  // Instruments
+  getInstruments: async () => {
+    const response = await axios.get(`${API}/instruments`);
+    return response.data;
+  },
+  
+  // Recommendations
+  getRecommendations: async (roomId, token) => {
+    const response = await axios.get(`${API}/rooms/${roomId}/recommendations`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    return response.data;
+  }
 };
 
 function App() {
+  const [user, setUser] = useState(null);
+  const [token, setToken] = useState(localStorage.getItem('token'));
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Check for stored auth data
+    const storedUser = localStorage.getItem('user');
+    const storedToken = localStorage.getItem('token');
+    
+    if (storedUser && storedToken) {
+      try {
+        setUser(JSON.parse(storedUser));
+        setToken(storedToken);
+      } catch (error) {
+        console.error('Error parsing stored user data:', error);
+        localStorage.removeItem('user');
+        localStorage.removeItem('token');
+      }
+    }
+    setLoading(false);
+  }, []);
+
+  const login = (authData) => {
+    setUser(authData.user);
+    setToken(authData.access_token);
+    localStorage.setItem('user', JSON.stringify(authData.user));
+    localStorage.setItem('token', authData.access_token);
+    toast.success('Login realizado com sucesso!');
+  };
+
+  const logout = () => {
+    setUser(null);
+    setToken(null);
+    localStorage.removeItem('user');
+    localStorage.removeItem('token');
+    toast.success('Logout realizado com sucesso!');
+  };
+
+  const authContextValue = {
+    user,
+    token,
+    login,
+    logout,
+    isAuthenticated: !!user && !!token
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
+          <p className="text-white">Carregando...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="App">
+    <AuthContext.Provider value={authContextValue}>
       <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Home />}>
-            <Route index element={<Home />} />
-          </Route>
-        </Routes>
+        <div className="App">
+          <Routes>
+            <Route 
+              path="/auth" 
+              element={!authContextValue.isAuthenticated ? <Auth /> : <Navigate to="/dashboard" />} 
+            />
+            <Route 
+              path="/dashboard" 
+              element={authContextValue.isAuthenticated ? <Dashboard /> : <Navigate to="/auth" />} 
+            />
+            <Route 
+              path="/room/:roomId" 
+              element={authContextValue.isAuthenticated ? <Room /> : <Navigate to="/auth" />} 
+            />
+            <Route 
+              path="/" 
+              element={<Navigate to={authContextValue.isAuthenticated ? "/dashboard" : "/auth"} />} 
+            />
+          </Routes>
+          <Toaster position="top-right" />
+        </div>
       </BrowserRouter>
-    </div>
+    </AuthContext.Provider>
   );
 }
 
