@@ -30,6 +30,7 @@ import { toast } from 'sonner';
 import { api, useAuth } from '../App';
 import socketService from '../services/socket';
 import IntelligentSearch from '../components/IntelligentSearch';
+import AudioRecognition from '../components/AudioRecognition';
 
 const Room = () => {
   const { roomId } = useParams();
