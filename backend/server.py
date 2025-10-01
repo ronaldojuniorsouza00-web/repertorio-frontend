@@ -330,45 +330,7 @@ def transpose_chords_string(chords_text: str, from_key: str, to_key: str) -> str
     except:
         return chords_text
 
-async def generate_instrument_notation(song: Song, instrument: str) -> str:
-    """Generate specific notation for an instrument"""
-    try:
-        chat = LlmChat(
-            api_key=EMERGENT_LLM_KEY,
-            session_id=f"notation_{uuid.uuid4()}",
-            system_message="Você é um especialista em música que cria notações específicas para diferentes instrumentos."
-        ).with_model("openai", "gpt-5")
-        
-        notation_prompts = {
-            "Violão": "Forneça os acordes principais para violão com dedilhado sugerido",
-            "Guitarra": "Forneça os acordes e possíveis riffs/solos para guitarra",
-            "Baixo": "Forneça as notas fundamentais e linha de baixo sugerida",
-            "Bateria": "Forneça a levada e padrão rítmico sugerido",
-            "Teclado": "Forneça os acordes e possível melodia para teclado",
-            "Piano": "Forneça os acordes completos e arranjo para piano",
-            "Cajon": "Forneça o padrão rítmico e técnicas de percussão",
-            "Ukulele": "Forneça os acordes adaptados para ukulele"
-        }
-        
-        prompt = notation_prompts.get(instrument, "Forneça notação básica para este instrumento")
-        
-        message = UserMessage(
-            text=f"""Para a música "{song.title}" de "{song.artist}" no tom de {song.key}:
-            
-            {prompt}
-            
-            Acordes conhecidos: {song.chords}
-            Gênero: {song.genre}
-            
-            Responda de forma prática e direta para músicos em apresentação ao vivo."""
-        )
-        
-        response = await chat.send_message(message)
-        return response
-        
-    except Exception as e:
-        logging.error(f"Error generating notation: {e}")
-        return f"Notação básica para {instrument} não disponível no momento"
+# Instrument notation function removed - no longer needed for collaborative system
 
 # Socket.IO Event Handlers
 @sio.event
