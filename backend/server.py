@@ -298,14 +298,12 @@ async def search_song_data(title: str, artist: str) -> Dict[str, Any]:
         message = UserMessage(
             text=f"""Forneça informações completas sobre a música "{title}" de "{artist}":
             
-            1. Letra completa com cifras integradas (coloque os acordes ACIMA das palavras onde devem ser tocados)
-            2. Sequência de acordes principais da música
-            3. Tom da música
-            4. Gênero musical específico
-            5. Andamento (BPM) preciso
-            6. Estrutura da música (verso, refrão, ponte, etc.)
+            IMPORTANTE: Crie uma transcrição profissional com cifras posicionadas exatamente onde devem ser tocadas.
             
-            FORMATO DA LETRA COM CIFRAS:
+            FORMATO OBRIGATÓRIO DA LETRA COM CIFRAS:
+            [Intro]
+            C - G - Am - F
+            
             [Verso 1]
                  C              G              Am             F
             Imagine all the people living for today
@@ -315,8 +313,31 @@ async def search_song_data(title: str, artist: str) -> Dict[str, Any]:
             [Refrão]
                  F              C              G              Am
             You may say I'm a dreamer, but I'm not the only one
+                 F              C              G              C
+            I hope someday you'll join us, and the world will be as one
             
-            Responda em formato JSON com as chaves: lyrics_with_chords, chords, key, genre, tempo, structure"""
+            [Ponte]
+                 Am            Dm             G              C
+            You may wonder why we're here, what's the meaning of it all
+            
+            REQUISITOS:
+            1. Letra COMPLETA com todas as partes (versos, refrão, ponte, final)
+            2. Cifras EXATAS posicionadas sobre as sílabas corretas
+            3. Estrutura clara com seções identificadas
+            4. Sequência de acordes principais
+            5. Tom correto da música
+            6. Gênero específico (incluir samba, pagode, roda de samba, bossa nova, forró quando aplicável)
+            7. BPM preciso
+            
+            Responda APENAS em formato JSON válido:
+            {
+                "lyrics_with_chords": "letra completa formatada",
+                "chords": "sequência de acordes principais",
+                "key": "tom da música",
+                "genre": "gênero específico",
+                "tempo": número_bpm,
+                "structure": "estrutura da música"
+            }"""
         )
         
         response = await chat.send_message(message)
