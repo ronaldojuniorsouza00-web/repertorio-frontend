@@ -174,10 +174,17 @@ class RepertoireUpdate(BaseModel):
 class Recording(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     room_id: str
+    user_id: str
+    user_name: str
+    recording_name: str
     filename: str
     duration: Optional[int] = None
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
-    created_by: str
+    is_playing: bool = False
+    volume: float = 1.0
+
+class StartRecordingRequest(BaseModel):
+    recording_name: str
 
 class AIRepertoireRequest(BaseModel):
     style: str  # "rock", "pop", "jazz", etc.
