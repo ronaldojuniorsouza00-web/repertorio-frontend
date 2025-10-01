@@ -1021,11 +1021,26 @@ const Room = () => {
                       </h2>
                       <p className="text-xl text-gray-600">por {roomData.current_song.artist}</p>
                       <div className="flex items-center justify-between mt-3">
-                        <div className="flex items-center space-x-4">
+                        <div className="flex items-center space-x-2 flex-wrap">
                           <Badge variant="outline">Tom: {roomData.current_song.key}</Badge>
                           <Badge variant="outline">{roomData.current_song.genre}</Badge>
                           {roomData.current_song.tempo && (
                             <Badge variant="outline">{roomData.current_song.tempo} BPM</Badge>
+                          )}
+                          {roomData.current_song.album && (
+                            <Badge variant="outline" className="bg-blue-50 border-blue-200 text-blue-700">
+                              📀 {roomData.current_song.album}
+                            </Badge>
+                          )}
+                          {roomData.current_song.release_date && (
+                            <Badge variant="outline" className="bg-gray-50 border-gray-200 text-gray-700">
+                              {roomData.current_song.release_date.substring(0, 4)}
+                            </Badge>
+                          )}
+                          {roomData.current_song.popularity && roomData.current_song.popularity > 0 && (
+                            <Badge variant="outline" className="bg-green-50 border-green-200 text-green-700">
+                              🔥 {roomData.current_song.popularity}%
+                            </Badge>
                           )}
                         </div>
                         
