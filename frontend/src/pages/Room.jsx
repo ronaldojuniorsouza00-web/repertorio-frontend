@@ -948,15 +948,23 @@ const Room = () => {
                     <TabsContent value="instrument" className="mt-4">
                       <div className="notation-display max-h-96 overflow-y-auto" data-testid="instrument-notation">
                         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
-                          <div className="flex items-center space-x-2 mb-2">
-                            <Music className="w-5 h-5 text-blue-600" />
-                            <span className="font-semibold text-blue-800">
-                              Notação específica para {currentUserInstrument}
-                            </span>
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center space-x-2">
+                              <Music className="w-5 h-5 text-blue-600" />
+                              <span className="font-semibold text-blue-800">
+                                Notação para {currentUserInstrument}
+                              </span>
+                            </div>
+                            <Badge variant="outline" className="text-xs">
+                              Tom: {roomData.current_song.key}
+                            </Badge>
                           </div>
                         </div>
-                        <pre className="whitespace-pre-wrap font-mono text-gray-800 leading-relaxed">
-                          {instrumentNotation || 'Carregando notação...'}
+                        <pre 
+                          className="whitespace-pre-wrap font-mono text-gray-800 leading-relaxed bg-white p-4 rounded border"
+                          style={{ fontSize: `${fontSize}px`, lineHeight: '1.6' }}
+                        >
+                          {instrumentNotation || 'Carregando notação específica...'}
                         </pre>
                       </div>
                     </TabsContent>
