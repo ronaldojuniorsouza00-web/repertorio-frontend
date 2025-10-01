@@ -5,6 +5,7 @@ import lyricsgenius
 import json
 import os
 import logging
+import hashlib
 from spotipy.oauth2 import SpotifyClientCredentials
 from typing import Dict, List, Optional, Any
 from emergentintegrations.llm.chat import LlmChat, UserMessage
