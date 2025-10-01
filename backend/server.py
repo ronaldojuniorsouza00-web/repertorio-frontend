@@ -914,8 +914,113 @@ async def stop_recording(
 
 @api_router.get("/rooms/{room_id}/recordings")
 async def get_recordings(room_id: str, current_user: User = Depends(get_current_user)):
-    recordings = await db.recordings.find({"room_id": room_id}).to_list(100)
+    recordings = await db.recordings.find({"room_id": room_id}).sort("created_at", -1).to_list(100)
     return {"recordings": [Recording(**rec) for rec in recordings]}
+
+# New collaborative playback endpoints
+@api_router.post("/rooms/{room_id}/recordings/{recording_id}/play")
+async def play_recording(
+    room_id: str, 
+    recording_id: str,
+    current_user: User = Depends(get_current_user)
+):
+    recording = await db.recordings.find_one({"id": recording_id, "room_id": room_id})
+    if not recording:
+        raise HTTPException(status_code=404, detail="Recording not found")
+    
+    # Update recording state
+    await db.recordings.update_one(
+        {"id": recording_id},
+        {"$set": {"is_playing": True}}
+    )
+    
+    # Emit to all room members
+    await sio.emit('recording_play', {
+        'recording_id': recording_id,
+        'triggered_by': current_user.name
+    }, room=room_id)
+    
+    return {"message": "Recording playing"}
+
+@api_router.post("/rooms/{room_id}/recordings/{recording_id}/pause")
+async def pause_recording(
+    room_id: str, 
+    recording_id: str,
+    current_user: User = Depends(get_current_user)
+):
+    recording = await db.recordings.find_one({"id": recording_id, "room_id": room_id})
+    if not recording:
+        raise HTTPException(status_code=404, detail="Recording not found")
+    
+    # Update recording state
+    await db.recordings.update_one(
+        {"id": recording_id},
+        {"$set": {"is_playing": False}}
+    )
+    
+    # Emit to all room members
+    await sio.emit('recording_pause', {
+        'recording_id': recording_id,
+        'triggered_by': current_user.name
+    }, room=room_id)
+    
+    return {"message": "Recording paused"}
+
+@api_router.post("/rooms/{room_id}/recordings/{recording_id}/volume")
+async def set_recording_volume(
+    room_id: str, 
+    recording_id: str,
+    volume: float,
+    current_user: User = Depends(get_current_user)
+):
+    if volume < 0 or volume > 1:
+        raise HTTPException(status_code=400, detail="Volume must be between 0 and 1")
+    
+    recording = await db.recordings.find_one({"id": recording_id, "room_id": room_id})
+    if not recording:
+        raise HTTPException(status_code=404, detail="Recording not found")
+    
+    # Update recording volume
+    await db.recordings.update_one(
+        {"id": recording_id},
+        {"$set": {"volume": volume}}
+    )
+    
+    # Emit to all room members
+    await sio.emit('recording_volume_changed', {
+        'recording_id': recording_id,
+        'volume': volume,
+        'triggered_by': current_user.name
+    }, room=room_id)
+    
+    return {"message": "Recording volume updated"}
+
+@api_router.delete("/rooms/{room_id}/recordings/{recording_id}")
+async def delete_recording(
+    room_id: str, 
+    recording_id: str,
+    current_user: User = Depends(get_current_user)
+):
+    # Only allow user to delete their own recordings or room admin
+    room = await db.rooms.find_one({"id": room_id})
+    recording = await db.recordings.find_one({"id": recording_id, "room_id": room_id})
+    
+    if not recording:
+        raise HTTPException(status_code=404, detail="Recording not found")
+    
+    if recording["user_id"] != current_user.id and room["admin_id"] != current_user.id:
+        raise HTTPException(status_code=403, detail="Not authorized to delete this recording")
+    
+    # Delete recording
+    await db.recordings.delete_one({"id": recording_id})
+    
+    # Emit to all room members
+    await sio.emit('recording_deleted', {
+        'recording_id': recording_id,
+        'deleted_by': current_user.name
+    }, room=room_id)
+    
+    return {"message": "Recording deleted"}
 
 # Presentation Mode
 @api_router.post("/rooms/{room_id}/presentation-mode")
