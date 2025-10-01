@@ -624,6 +624,52 @@ async def set_next_song(
     
     return {"message": "Next song updated"}
 
+@api_router.post("/rooms/{room_id}/transpose")
+async def transpose_room_repertoire(
+    room_id: str,
+    transpose_data: TransposeRequest,
+    current_user: User = Depends(get_current_user)
+):
+    room = await db.rooms.find_one({"id": room_id})
+    if not room:
+        raise HTTPException(status_code=404, detail="Room not found")
+    
+    if room["admin_id"] != current_user.id:
+        raise HTTPException(status_code=403, detail="Only admin can transpose repertoire")
+    
+    # Transpose current song if exists
+    if room.get("current_song_id"):
+        song = await db.songs.find_one({"id": room["current_song_id"]})
+        if song:
+            new_chords = transpose_chords_string(song.get("chords", ""), transpose_data.from_key, transpose_data.to_key)
+            await db.songs.update_one(
+                {"id": room["current_song_id"]},
+                {"$set": {"key": transpose_data.to_key, "chords": new_chords}}
+            )
+    
+    # Emit real-time update
+    await sio.emit('transpose_changed', {
+        'room_id': room_id,
+        'new_key': transpose_data.to_key,
+        'user': current_user.name
+    }, room=room_id)
+    
+    return {"message": "Room repertoire transposed successfully"}
+
+@api_router.get("/rooms/{room_id}/sync")
+async def sync_room_state(room_id: str, current_user: User = Depends(get_current_user)):
+    room_data = await get_room(room_id, current_user)
+    
+    # Emit current state to all users in room
+    await sio.emit('room_sync', {
+        'room': room_data["room"].dict() if hasattr(room_data["room"], 'dict') else room_data["room"],
+        'current_song': room_data["current_song"].dict() if room_data["current_song"] and hasattr(room_data["current_song"], 'dict') else room_data["current_song"],
+        'next_song': room_data["next_song"].dict() if room_data["next_song"] and hasattr(room_data["next_song"], 'dict') else room_data["next_song"],
+        'members': [member.dict() if hasattr(member, 'dict') else member for member in room_data["members"]]
+    }, room=room_id)
+    
+    return {"message": "Room state synchronized"}
+
 # Instruments Route
 @api_router.get("/instruments")
 async def get_instruments():
