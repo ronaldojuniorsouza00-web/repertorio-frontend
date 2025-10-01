@@ -632,6 +632,12 @@ async def search_song(song_data: SongCreate, current_user: User = Depends(get_cu
     await db.songs.insert_one(song.dict())
     return song
 
+@api_router.post("/songs/intelligent-search")
+async def intelligent_search(search_data: SongSearch, current_user: User = Depends(get_current_user)):
+    """AI-powered song search"""
+    results = await intelligent_song_search(search_data.query)
+    return {"results": results}
+
 @api_router.get("/songs/{song_id}", response_model=Song)
 async def get_song(song_id: str, current_user: User = Depends(get_current_user)):
     song = await db.songs.find_one({"id": song_id})
