@@ -1170,16 +1170,29 @@ const Room = () => {
                       </div>
                     </div>
                     
-                    {isAdmin && (
-                      <Button
-                        onClick={() => handleSetCurrentSong(roomData.next_song.id)}
-                        className="bg-orange-600 hover:bg-orange-700 text-white"
-                        size="sm"
-                      >
-                        <Play className="w-4 h-4 mr-1" />
-                        Tocar Agora
-                      </Button>
-                    )}
+                    <div className="flex items-center space-x-2">
+                      {isAdmin && (
+                        <>
+                          <Button
+                            onClick={() => handleSetCurrentSong(roomData.next_song.id)}
+                            className="bg-orange-600 hover:bg-orange-700 text-white"
+                            size="sm"
+                          >
+                            <Play className="w-4 h-4 mr-1" />
+                            Tocar Agora
+                          </Button>
+                          <Button
+                            onClick={handleNextSong}
+                            variant="outline"
+                            size="sm"
+                            className="border-orange-300 text-orange-600 hover:bg-orange-50"
+                          >
+                            <SkipForward className="w-4 h-4 mr-1" />
+                            Avançar Playlist
+                          </Button>
+                        </>
+                      )}
+                    </div>
                   </div>
                 </CardHeader>
               </Card>
