@@ -259,6 +259,45 @@ async def search_song_data(title: str, artist: str) -> Dict[str, Any]:
             "tempo": 120
         }
 
+def transpose_chord(chord: str, semitones: int) -> str:
+    """Transpose a single chord by semitones"""
+    try:
+        # Extract the base note (first 1 or 2 characters)
+        if len(chord) > 1 and chord[1] in ['#', 'b']:
+            base_note = chord[:2]
+            suffix = chord[2:]
+        else:
+            base_note = chord[0]
+            suffix = chord[1:]
+        
+        if base_note in CHORD_MAPPINGS:
+            original_value = CHORD_MAPPINGS[base_note]
+            new_value = (original_value + semitones) % 12
+            new_base = REVERSE_CHORD_MAPPINGS[new_value]
+            return new_base + suffix
+        return chord
+    except:
+        return chord
+
+def transpose_chords_string(chords_text: str, from_key: str, to_key: str) -> str:
+    """Transpose all chords in a text from one key to another"""
+    try:
+        if from_key not in CHORD_MAPPINGS or to_key not in CHORD_MAPPINGS:
+            return chords_text
+        
+        semitones = (CHORD_MAPPINGS[to_key] - CHORD_MAPPINGS[from_key]) % 12
+        
+        # Pattern to match chord symbols
+        chord_pattern = r'\b([A-G][#b]?(?:maj|min|m|M|sus|aug|dim|add|\d)*)\b'
+        
+        def replace_chord(match):
+            chord = match.group(1)
+            return transpose_chord(chord, semitones)
+        
+        return re.sub(chord_pattern, replace_chord, chords_text)
+    except:
+        return chords_text
+
 async def generate_instrument_notation(song: Song, instrument: str) -> str:
     """Generate specific notation for an instrument"""
     try:
