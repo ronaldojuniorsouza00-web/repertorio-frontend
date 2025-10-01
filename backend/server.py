@@ -31,10 +31,19 @@ SECRET_KEY = "music_maestro_secret_key_2025"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
+# Create Socket.IO server
+sio = socketio.AsyncServer(
+    async_mode='asgi',
+    cors_allowed_origins="*"
+)
+
 # Create the main app
 app = FastAPI()
 api_router = APIRouter(prefix="/api")
 security = HTTPBearer()
+
+# Mount Socket.IO
+socket_app = socketio.ASGIApp(sio, app)
 
 # LLM Configuration
 EMERGENT_LLM_KEY = os.environ.get('EMERGENT_LLM_KEY')
