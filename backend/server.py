@@ -878,7 +878,7 @@ async def get_recommendations(room_id: str, current_user: User = Depends(get_cur
         logging.error(f"Error generating recommendations: {e}")
         return {"recommendations": []}
 
-# AI Repertoire Generation
+# AI Repertoire Generation - OPTIMIZED
 @api_router.post("/rooms/{room_id}/generate-repertoire")
 async def generate_ai_repertoire(
     room_id: str,
@@ -892,59 +892,87 @@ async def generate_ai_repertoire(
     if room["admin_id"] != current_user.id:
         raise HTTPException(status_code=403, detail="Only admin can generate repertoire")
     
+    # Check cache first for repertoire generation
+    cache_key_data = {
+        "style": repertoire_request.style,
+        "duration": repertoire_request.duration_minutes,
+        "energy": repertoire_request.energy_level,
+        "audience": repertoire_request.audience_type
+    }
+    
+    cached_repertoire = await cache_service.get_cached_result(
+        "ai_repertoire",
+        cache_key_data,
+        max_age_hours=48  # Cache repertoires for 2 days
+    )
+    
+    if cached_repertoire:
+        logging.info(f"Cache hit for repertoire: {repertoire_request.style}")
+        return cached_repertoire
+    
     try:
         chat = LlmChat(
             api_key=EMERGENT_LLM_KEY,
-            session_id=f"repertoire_{uuid.uuid4()}",
-            system_message="Você é um especialista em curadoria musical para shows ao vivo e eventos."
+            session_id=f"repertoire_{repertoire_request.style}_{repertoire_request.duration_minutes}",
+            system_message="Curador musical rápido. Responda apenas com lista de músicas."
         ).with_model("openai", "gpt-5")
         
+        # Shorter, more focused prompt for speed
         message = UserMessage(
-            text=f"""Crie um repertório completo para um evento de {repertoire_request.duration_minutes} minutos com as seguintes características:
+            text=f"""Repertório {repertoire_request.style} - {repertoire_request.duration_minutes}min
+            Energia: {repertoire_request.energy_level}
+            Público: {repertoire_request.audience_type}
             
-            - Estilo musical: {repertoire_request.style}
-            - Nível de energia: {repertoire_request.energy_level}
-            - Público-alvo: {repertoire_request.audience_type}
-            - Duração total: {repertoire_request.duration_minutes} minutos
+            Liste 15 músicas conhecidas no formato exato:
+            "Título - Artista - 3min"
             
-            Responda com uma lista de 12-20 músicas no formato:
-            "Título - Artista - Duração (em minutos)"
-            
-            Organize o repertório considerando:
-            1. Abertura impactante
-            2. Variação de ritmo e energia
-            3. Momentos de conexão com o público
-            4. Encerramento memorável
-            
-            Inclua apenas músicas conhecidas e adequadas ao público especificado."""
+            APENAS a lista, sem texto adicional."""
         )
         
-        response = await chat.send_message(message)
+        # Set timeout for AI call
+        response = await asyncio.wait_for(
+            chat.send_message(message),
+            timeout=12.0  # 12 second timeout
+        )
         
-        # Parse repertoire
+        # Parse repertoire quickly
         repertoire = []
         lines = response.strip().split('\n')
         for line in lines:
+            line = line.strip()
             if ' - ' in line and len(line.split(' - ')) >= 2:
-                parts = line.strip().split(' - ')
-                if len(parts) >= 3:
-                    title = parts[0].strip()
+                parts = line.split(' - ')
+                if len(parts) >= 2:
+                    title = parts[0].strip(' "')
                     artist = parts[1].strip()
-                    duration = parts[2].strip()
+                    duration = parts[2].strip() if len(parts) > 2 else "3min"
+                    
                     repertoire.append({
                         "title": title,
                         "artist": artist,
                         "duration": duration,
-                        "original_line": line.strip()
+                        "original_line": line
                     })
         
-        return {
+        result = {
             "repertoire": repertoire,
             "style": repertoire_request.style,
             "total_songs": len(repertoire),
             "estimated_duration": repertoire_request.duration_minutes
         }
         
+        # Cache the result
+        await cache_service.set_cached_result(
+            "ai_repertoire",
+            cache_key_data,
+            result
+        )
+        
+        return result
+        
+    except asyncio.TimeoutError:
+        logging.warning("AI repertoire generation timeout")
+        raise HTTPException(status_code=408, detail="Timeout generating repertoire. Try again.")
     except Exception as e:
         logging.error(f"Error generating repertoire: {e}")
         raise HTTPException(status_code=500, detail="Error generating repertoire")
