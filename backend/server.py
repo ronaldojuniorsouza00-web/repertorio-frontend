@@ -562,9 +562,45 @@ async def search_song(song_data: SongCreate, current_user: User = Depends(get_cu
 
 @api_router.post("/songs/intelligent-search")
 async def intelligent_search(search_data: SongSearch, current_user: User = Depends(get_current_user)):
-    """AI-powered song search"""
+    """Spotify + AI powered song search"""
     results = await intelligent_song_search(search_data.query)
     return {"results": results}
+
+@api_router.post("/songs/recognize-audio")
+async def recognize_audio_endpoint(
+    audio_file: bytes,
+    current_user: User = Depends(get_current_user)
+):
+    """Recognize song from audio using AUdD API"""
+    try:
+        # Save temporary audio file
+        temp_path = f"/tmp/audio_recognition_{uuid.uuid4()}.mp3"
+        with open(temp_path, 'wb') as f:
+            f.write(audio_file)
+        
+        # Recognize using AUdD
+        result = await music_service.recognize_audio(temp_path)
+        
+        # Clean up temp file
+        os.remove(temp_path)
+        
+        if result:
+            return {
+                "recognized": True,
+                "song": result
+            }
+        else:
+            return {
+                "recognized": False,
+                "message": "Música não reconhecida"
+            }
+            
+    except Exception as e:
+        logging.error(f"Audio recognition error: {e}")
+        return {
+            "recognized": False,
+            "error": str(e)
+        }
 
 @api_router.get("/songs/{song_id}", response_model=Song)
 async def get_song(song_id: str, current_user: User = Depends(get_current_user)):
