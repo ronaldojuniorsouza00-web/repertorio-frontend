@@ -14,6 +14,7 @@ class MusicMaestroAPITester:
         self.tests_passed = 0
         self.room_id = None
         self.song_id = None
+        self.recording_id = None
 
     def run_test(self, name, method, endpoint, expected_status, data=None, headers=None):
         """Run a single API test"""
