@@ -483,6 +483,106 @@ const Room = () => {
                     Recomendações IA
                   </Button>
                   
+                  <Dialog open={showAIRepertoire} onOpenChange={setShowAIRepertoire}>
+                    <DialogTrigger asChild>
+                      <Button 
+                        variant="outline"
+                        className="border-amber-200 hover:bg-amber-50"
+                        data-testid="ai-repertoire-button"
+                      >
+                        <Music className="w-4 h-4 mr-2" />
+                        Repertório IA
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>Gerar Repertório com IA</DialogTitle>
+                      </DialogHeader>
+                      <form onSubmit={handleGenerateAIRepertoire} className="space-y-4">
+                        <div className="grid grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <Label>Estilo Musical</Label>
+                            <Select 
+                              value={aiRepertoireForm.style} 
+                              onValueChange={(value) => setAiRepertoireForm({...aiRepertoireForm, style: value})}
+                            >
+                              <SelectTrigger>
+                                <SelectValue placeholder="Selecione o estilo" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="rock">Rock</SelectItem>
+                                <SelectItem value="pop">Pop</SelectItem>
+                                <SelectItem value="mpb">MPB</SelectItem>
+                                <SelectItem value="sertanejo">Sertanejo</SelectItem>
+                                <SelectItem value="jazz">Jazz</SelectItem>
+                                <SelectItem value="blues">Blues</SelectItem>
+                                <SelectItem value="reggae">Reggae</SelectItem>
+                                <SelectItem value="funk">Funk</SelectItem>
+                                <SelectItem value="gospel">Gospel</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          
+                          <div className="space-y-2">
+                            <Label>Duração (minutos)</Label>
+                            <Input
+                              type="number"
+                              min="30"
+                              max="180"
+                              value={aiRepertoireForm.duration_minutes}
+                              onChange={(e) => setAiRepertoireForm({...aiRepertoireForm, duration_minutes: parseInt(e.target.value)})}
+                            />
+                          </div>
+                        </div>
+                        
+                        <div className="grid grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <Label>Nível de Energia</Label>
+                            <Select 
+                              value={aiRepertoireForm.energy_level} 
+                              onValueChange={(value) => setAiRepertoireForm({...aiRepertoireForm, energy_level: value})}
+                            >
+                              <SelectTrigger>
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="baixa">Baixa - Acústico/Intimista</SelectItem>
+                                <SelectItem value="media">Média - Equilibrado</SelectItem>
+                                <SelectItem value="alta">Alta - Energético/Dançante</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          
+                          <div className="space-y-2">
+                            <Label>Público-Alvo</Label>
+                            <Select 
+                              value={aiRepertoireForm.audience_type} 
+                              onValueChange={(value) => setAiRepertoireForm({...aiRepertoireForm, audience_type: value})}
+                            >
+                              <SelectTrigger>
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="familia">Família</SelectItem>
+                                <SelectItem value="jovens">Jovens</SelectItem>
+                                <SelectItem value="adultos">Adultos</SelectItem>
+                                <SelectItem value="idosos">Terceira Idade</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        </div>
+                        
+                        <Button 
+                          type="submit" 
+                          className="w-full bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white"
+                          disabled={loading}
+                        >
+                          {loading ? 'Gerando...' : 'Gerar Repertório'}
+                        </Button>
+                      </form>
+                    </DialogContent>
+                  </Dialog>
+                  
                   <Dialog open={showTranspose} onOpenChange={setShowTranspose}>
                     <DialogTrigger asChild>
                       <Button 
