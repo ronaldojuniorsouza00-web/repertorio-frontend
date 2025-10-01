@@ -109,8 +109,8 @@ user_problem_statement: |
   
 backend:
   - task: "Remove instrument selection system"
-    implemented: false
-    working: "NA"
+    implemented: true
+    working: true
     file: "server.py"
     stuck_count: 0
     priority: "high"
@@ -119,10 +119,13 @@ backend:
       - working: "NA"
         agent: "main"
         comment: "Starting to remove instrument selector system from backend"
+      - working: true
+        agent: "main"
+        comment: "Removed instruments endpoint, updated room join to not require instruments, removed instrument notation system"
 
   - task: "Implement collaborative recording system"
-    implemented: false 
-    working: "NA"
+    implemented: true
+    working: true
     file: "server.py"
     stuck_count: 0
     priority: "high"
@@ -131,6 +134,9 @@ backend:
       - working: "NA"
         agent: "main"
         comment: "Need to create enhanced recording system with user names and multiple playback"
+      - working: true
+        agent: "main"
+        comment: "Created new Recording model with user info, added collaborative playback endpoints, real-time sync via WebSocket"
 
 frontend:
   - task: "Remove InstrumentSelector component"
