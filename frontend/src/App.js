@@ -201,6 +201,50 @@ export const api = {
       headers: { Authorization: `Bearer ${token}` }
     });
     return response.data;
+  },
+
+  // Collaborative Recording System
+  startRecording: async (roomId, recordingData, token) => {
+    const response = await axios.post(`${API}/rooms/${roomId}/start-recording`, recordingData, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    return response.data;
+  },
+  stopRecording: async (roomId, recordingId, duration, token) => {
+    const response = await axios.post(`${API}/rooms/${roomId}/stop-recording/${recordingId}?duration=${duration}`, {}, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    return response.data;
+  },
+  getRecordings: async (roomId, token) => {
+    const response = await axios.get(`${API}/rooms/${roomId}/recordings`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    return response.data;
+  },
+  playRecording: async (roomId, recordingId, token) => {
+    const response = await axios.post(`${API}/rooms/${roomId}/recordings/${recordingId}/play`, {}, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    return response.data;
+  },
+  pauseRecording: async (roomId, recordingId, token) => {
+    const response = await axios.post(`${API}/rooms/${roomId}/recordings/${recordingId}/pause`, {}, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    return response.data;
+  },
+  setRecordingVolume: async (roomId, recordingId, volume, token) => {
+    const response = await axios.post(`${API}/rooms/${roomId}/recordings/${recordingId}/volume?volume=${volume}`, {}, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    return response.data;
+  },
+  deleteRecording: async (roomId, recordingId, token) => {
+    const response = await axios.delete(`${API}/rooms/${roomId}/recordings/${recordingId}`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    return response.data;
   }
 };
 
