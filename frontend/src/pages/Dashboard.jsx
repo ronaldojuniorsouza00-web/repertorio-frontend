@@ -9,7 +9,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Music, Users, Plus, LogOut, Guitar } from 'lucide-react';
 import { toast } from 'sonner';
 import { api, useAuth } from '../App';
-import InstrumentSelector from '../components/InstrumentSelector';
+// InstrumentSelector removed - no longer needed for collaborative system
 
 const Dashboard = () => {
   const { user, token, logout } = useAuth();
