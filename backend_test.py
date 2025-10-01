@@ -225,8 +225,8 @@ class MusicMaestroAPITester:
             return False
             
         join_data = {
-            "room_code": room_data['room']['code'],
-            "instrument": "Violão"
+            "room_code": room_data['room']['code']
+            # No instrument field needed anymore
         }
         
         success, response = self.run_test(
