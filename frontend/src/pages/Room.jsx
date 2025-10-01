@@ -45,6 +45,14 @@ const Room = () => {
     title: '',
     artist: ''
   });
+  
+  const [transposeForm, setTransposeForm] = useState({
+    from_key: '',
+    to_key: ''
+  });
+
+  // Available keys for transposition
+  const musicalKeys = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
 
   useEffect(() => {
     loadRoomData();
