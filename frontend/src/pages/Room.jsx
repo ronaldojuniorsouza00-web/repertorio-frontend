@@ -1167,6 +1167,13 @@ const Room = () => {
           }}
         />
         
+        {/* Collaborative Recording Component */}
+        <CollaborativeRecording
+          roomId={roomId}
+          isOpen={showCollaborativeRecording}
+          onClose={() => setShowCollaborativeRecording(false)}
+        />
+
         {/* Fixed Next Song Bar */}
         <NextSongBar
           nextSong={roomData?.next_song}
