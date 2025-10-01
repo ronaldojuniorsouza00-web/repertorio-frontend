@@ -156,6 +156,20 @@ export const api = {
       headers: { Authorization: `Bearer ${token}` }
     });
     return response.data;
+  },
+  
+  // Room Settings
+  updateRoomSettings: async (roomId, settings, token) => {
+    const response = await axios.post(`${API}/rooms/${roomId}/settings`, settings, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    return response.data;
+  },
+  getRoomSettings: async (roomId, token) => {
+    const response = await axios.get(`${API}/rooms/${roomId}/settings`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    return response.data;
   }
 };
 
