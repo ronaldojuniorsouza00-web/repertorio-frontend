@@ -853,16 +853,22 @@ async def generate_ai_repertoire(
 
 # Recording functionality
 @api_router.post("/rooms/{room_id}/start-recording")
-async def start_recording(room_id: str, current_user: User = Depends(get_current_user)):
+async def start_recording(
+    room_id: str, 
+    recording_request: StartRecordingRequest,
+    current_user: User = Depends(get_current_user)
+):
     room = await db.rooms.find_one({"id": room_id})
     if not room:
         raise HTTPException(status_code=404, detail="Room not found")
     
-    # Create recording entry
+    # Create recording entry with name and user info
     recording = Recording(
         room_id=room_id,
-        filename=f"recording_{room_id}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.webm",
-        created_by=current_user.id
+        user_id=current_user.id,
+        user_name=current_user.name,
+        recording_name=recording_request.recording_name,
+        filename=f"recording_{room_id}_{current_user.id}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.webm",
     )
     
     await db.recordings.insert_one(recording.dict())
@@ -870,10 +876,12 @@ async def start_recording(room_id: str, current_user: User = Depends(get_current
     # Emit to all room members
     await sio.emit('recording_started', {
         'recording_id': recording.id,
-        'started_by': current_user.name
+        'user_name': current_user.name,
+        'recording_name': recording_request.recording_name,
+        'recording': recording.dict()
     }, room=room_id)
     
-    return {"message": "Recording started", "recording_id": recording.id}
+    return {"message": "Recording started", "recording_id": recording.id, "recording": recording.dict()}
 
 @api_router.post("/rooms/{room_id}/stop-recording/{recording_id}")
 async def stop_recording(
