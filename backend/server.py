@@ -116,6 +116,10 @@ class Room(BaseModel):
     next_song_id: Optional[str] = None
     playlist: List[str] = Field(default_factory=list)
     is_active: bool = True
+    # New settings
+    current_tempo: int = 120
+    font_size: int = 16
+    presentation_mode: bool = False
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 class RoomCreate(BaseModel):
