@@ -117,8 +117,12 @@ function App() {
     
     if (storedUser && storedToken) {
       try {
-        setUser(JSON.parse(storedUser));
+        const userData = JSON.parse(storedUser);
+        setUser(userData);
         setToken(storedToken);
+        
+        // Connect to socket with stored token
+        socketService.connect(storedToken);
       } catch (error) {
         console.error('Error parsing stored user data:', error);
         localStorage.removeItem('user');
