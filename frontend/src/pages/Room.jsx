@@ -908,9 +908,29 @@ const Room = () => {
                     
                     <TabsContent value="lyrics" className="mt-4">
                       <div className="lyrics-display bg-gray-50 p-6 rounded-lg max-h-96 overflow-y-auto">
-                        <pre className="whitespace-pre-wrap font-sans text-gray-800 leading-relaxed">
+                        <pre 
+                          className="whitespace-pre-wrap font-mono text-gray-800 leading-relaxed"
+                          style={{ fontSize: `${fontSize}px`, lineHeight: '1.6' }}
+                        >
                           {roomData.current_song.lyrics}
                         </pre>
+                        
+                        {/* BPM Indicator */}
+                        <div className="mt-4 flex items-center justify-between">
+                          <Badge 
+                            variant="outline" 
+                            className="bg-blue-50 border-blue-200 text-blue-700"
+                          >
+                            <Zap className="w-3 h-3 mr-1" />
+                            {currentTempo} BPM
+                          </Badge>
+                          
+                          {presentationMode && (
+                            <div className="text-xs text-gray-500 bg-purple-50 px-2 py-1 rounded">
+                              🎤 Modo Apresentação
+                            </div>
+                          )}
+                        </div>
                       </div>
                     </TabsContent>
                     
