@@ -172,7 +172,7 @@ const Dashboard = () => {
                 <Users className="w-8 h-8 text-white" />
               </div>
               <CardTitle className="text-2xl text-gray-900">Entrar em Sala</CardTitle>
-              <p className="text-gray-600">Digite o código da sala e escolha seu instrumento</p>
+              <p className="text-gray-600">Digite o código da sala para participar</p>
             </CardHeader>
             <CardContent>
               <Dialog open={showJoinRoom} onOpenChange={setShowJoinRoom}>
