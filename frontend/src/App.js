@@ -149,6 +149,10 @@ function App() {
     setToken(null);
     localStorage.removeItem('user');
     localStorage.removeItem('token');
+    
+    // Disconnect socket
+    socketService.disconnect();
+    
     toast.success('Logout realizado com sucesso!');
   };
 
