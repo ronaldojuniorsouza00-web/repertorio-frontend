@@ -152,6 +152,20 @@ class RepertoireUpdate(BaseModel):
     action: str  # "add_song", "remove_song", "reorder", "transpose"
     data: Dict[str, Any]
 
+class Recording(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    room_id: str
+    filename: str
+    duration: Optional[int] = None
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    created_by: str
+
+class AIRepertoireRequest(BaseModel):
+    style: str  # "rock", "pop", "jazz", etc.
+    duration_minutes: Optional[int] = 60
+    energy_level: str  # "baixa", "media", "alta"
+    audience_type: str  # "familia", "jovens", "adultos"
+
 # Predefined instruments - Lista completa
 INSTRUMENTS = [
     # Cordas
