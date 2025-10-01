@@ -983,21 +983,47 @@ const Room = () => {
               </Card>
             )}
 
-            {/* Next Song Preview */}
+            {/* Next Song Preview - Enhanced */}
             {roomData.next_song && (
-              <Card className="bg-gradient-to-r from-orange-100 to-red-100 border-orange-200 shadow-lg" data-testid="next-song-card">
+              <Card className="bg-gradient-to-r from-orange-100 to-red-100 border-orange-200 shadow-lg sticky bottom-4 z-10" data-testid="next-song-card">
                 <CardHeader className="pb-4">
-                  <CardTitle className="text-xl text-gray-900 flex items-center">
-                    <SkipForward className="w-5 h-5 mr-2 text-orange-600" />
-                    Próxima: {roomData.next_song.title} - {roomData.next_song.artist}
-                  </CardTitle>
-                  <div className="flex items-center space-x-2 mt-2">
-                    <Badge variant="outline" className="border-orange-300 text-orange-700">
-                      Tom: {roomData.next_song.key}
-                    </Badge>
-                    <Badge variant="outline" className="border-orange-300 text-orange-700">
-                      {roomData.next_song.genre}
-                    </Badge>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <CardTitle className="text-xl text-gray-900 flex items-center">
+                        <SkipForward className="w-5 h-5 mr-2 text-orange-600" />
+                        Próxima Música
+                      </CardTitle>
+                      <h3 className="text-2xl font-bold text-orange-700 mt-1">
+                        {roomData.next_song.title}
+                      </h3>
+                      <p className="text-lg text-orange-600">
+                        por {roomData.next_song.artist}
+                      </p>
+                      <div className="flex items-center space-x-2 mt-2">
+                        <Badge variant="outline" className="border-orange-300 text-orange-700">
+                          Tom: {roomData.next_song.key}
+                        </Badge>
+                        <Badge variant="outline" className="border-orange-300 text-orange-700">
+                          {roomData.next_song.genre}
+                        </Badge>
+                        {roomData.next_song.tempo && (
+                          <Badge variant="outline" className="border-orange-300 text-orange-700">
+                            {roomData.next_song.tempo} BPM
+                          </Badge>
+                        )}
+                      </div>
+                    </div>
+                    
+                    {isAdmin && (
+                      <Button
+                        onClick={() => handleSetCurrentSong(roomData.next_song.id)}
+                        className="bg-orange-600 hover:bg-orange-700 text-white"
+                        size="sm"
+                      >
+                        <Play className="w-4 h-4 mr-1" />
+                        Tocar Agora
+                      </Button>
+                    )}
                   </div>
                 </CardHeader>
               </Card>
