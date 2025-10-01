@@ -133,6 +133,14 @@ class InstrumentNotation(BaseModel):
     notation: str
     difficulty: str  # "beginner", "intermediate", "advanced"
 
+class TransposeRequest(BaseModel):
+    from_key: str
+    to_key: str
+    
+class RepertoireUpdate(BaseModel):
+    action: str  # "add_song", "remove_song", "reorder", "transpose"
+    data: Dict[str, Any]
+
 # Predefined instruments
 INSTRUMENTS = [
     {"name": "Violão", "category": "Cordas", "notation_type": "chords"},
