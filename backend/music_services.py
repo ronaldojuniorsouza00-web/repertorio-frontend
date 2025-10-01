@@ -70,8 +70,20 @@ class MusicAPIService:
 
     async def search_song_comprehensive(self, title: str, artist: str) -> Dict[str, Any]:
         """
-        Comprehensive song search using multiple APIs
+        Fast comprehensive song search with caching and parallel processing
         """
+        # Check cache first
+        if self.cache_service:
+            cached_result = await self.cache_service.get_cached_result(
+                "song_search",
+                {"title": title.lower(), "artist": artist.lower()},
+                max_age_hours=168  # 7 days for songs
+            )
+            if cached_result:
+                logging.info(f"Cache hit for {title} by {artist}")
+                return cached_result
+        
+        # Default result structure
         result = {
             "title": title,
             "artist": artist,
@@ -91,27 +103,49 @@ class MusicAPIService:
         }
         
         try:
-            # 1. Search Spotify for accurate metadata
-            spotify_data = await self._search_spotify(title, artist)
+            # Run API calls in parallel for speed
+            tasks = []
+            
+            # 1. Spotify search (fast)
+            spotify_task = asyncio.create_task(self._search_spotify(title, artist))
+            tasks.append(("spotify", spotify_task))
+            
+            # 2. Genius search (can be slow, run in parallel)
+            genius_task = asyncio.create_task(self._get_lyrics_genius(title, artist))
+            tasks.append(("genius", genius_task))
+            
+            # Wait for fast results first (Spotify)
+            spotify_data = await spotify_task
             if spotify_data:
                 result.update(spotify_data)
             
-            # 2. Get lyrics from Genius
-            lyrics_data = await self._get_lyrics_genius(title, artist)
-            if lyrics_data:
-                result.update(lyrics_data)
+            # Wait for Genius with timeout
+            try:
+                genius_data = await asyncio.wait_for(genius_task, timeout=5.0)
+                if genius_data:
+                    result.update(genius_data)
+            except asyncio.TimeoutError:
+                logging.warning(f"Genius API timeout for {title} by {artist}")
             
-            # 3. If no real data found, use AI as fallback
-            if not result["lyrics"] or not result["chords"]:
-                ai_data = await self._generate_ai_fallback(title, artist, result)
+            # 3. Generate AI fallback if needed (only for missing chords)
+            if not result.get("chords") or not result.get("lyrics"):
+                ai_data = await self._generate_ai_fallback_fast(title, artist, result)
                 result.update(ai_data)
+            
+            # Cache the result
+            if self.cache_service:
+                await self.cache_service.set_cached_result(
+                    "song_search",
+                    {"title": title.lower(), "artist": artist.lower()},
+                    result
+                )
             
             return result
             
         except Exception as e:
             logging.error(f"Error in comprehensive search: {e}")
-            # Fallback to AI if all APIs fail
-            return await self._generate_ai_fallback(title, artist, result)
+            # Fast fallback
+            return await self._generate_ai_fallback_fast(title, artist, result)
 
     async def _search_spotify(self, title: str, artist: str) -> Optional[Dict[str, Any]]:
         """Search Spotify for song metadata"""
