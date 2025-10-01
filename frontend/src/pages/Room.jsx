@@ -192,10 +192,13 @@ const Room = () => {
     setLoading(true);
     try {
       const song = await api.searchSong(songForm, token);
-      toast.success(`Música "${song.title}" adicionada!`);
+      
+      // Automatically add to playlist
+      await handleAddToPlaylist(song);
+      
       setSongForm({ title: '', artist: '' });
       setShowAddSong(false);
-      await loadRoomData();
+      toast.success(`Música "${song.title}" adicionada à playlist com transcrições!`);
     } catch (error) {
       console.error('Error adding song:', error);
       toast.error('Erro ao adicionar música');
