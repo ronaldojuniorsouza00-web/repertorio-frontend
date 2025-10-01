@@ -122,6 +122,9 @@ backend:
       - working: true
         agent: "main"
         comment: "Removed instruments endpoint, updated room join to not require instruments, removed instrument notation system"
+      - working: true
+        agent: "testing"
+        comment: "✅ VERIFIED: /api/instruments endpoint returns 404 (correctly removed). /api/rooms/join works without instrument field. /api/songs/{id}/notation/{instrument} returns 404 (correctly removed). All instrument system removal completed successfully."
 
   - task: "Implement collaborative recording system"
     implemented: true
@@ -137,6 +140,9 @@ backend:
       - working: true
         agent: "main"
         comment: "Created new Recording model with user info, added collaborative playback endpoints, real-time sync via WebSocket"
+      - working: true
+        agent: "testing"
+        comment: "✅ VERIFIED: All collaborative recording endpoints working perfectly. POST /api/rooms/{room_id}/start-recording (with recording_name), POST /api/rooms/{room_id}/stop-recording/{recording_id}?duration=X, GET /api/rooms/{room_id}/recordings, POST /api/rooms/{room_id}/recordings/{recording_id}/play, POST /api/rooms/{room_id}/recordings/{recording_id}/pause, POST /api/rooms/{room_id}/recordings/{recording_id}/volume?volume=X, DELETE /api/rooms/{room_id}/recordings/{recording_id}. MongoDB persistence verified. Real-time WebSocket events working."
 
 frontend:
   - task: "Remove InstrumentSelector component"
