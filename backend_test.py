@@ -119,17 +119,17 @@ class MusicMaestroAPITester:
             return True
         return False
 
-    def test_get_instruments(self):
-        """Test getting available instruments"""
+    def test_instruments_removed(self):
+        """Test that instruments endpoint returns 404 (removed)"""
         success, response = self.run_test(
-            "Get Instruments",
+            "Instruments Endpoint Removed",
             "GET",
             "instruments",
-            200
+            404
         )
         
-        if success and isinstance(response, list) and len(response) > 0:
-            print(f"   Found {len(response)} instruments")
+        if success:
+            print(f"   ✅ Instruments endpoint correctly returns 404 (removed)")
             return True
         return False
 
