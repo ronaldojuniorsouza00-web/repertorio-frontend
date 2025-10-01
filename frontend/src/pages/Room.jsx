@@ -1250,33 +1250,14 @@ const Room = () => {
               </CardContent>
             </Card>
 
-            {/* AI Recommendations */}
-            <Dialog open={showRecommendations} onOpenChange={setShowRecommendations}>
-              <DialogContent className="max-w-md">
-                <DialogHeader>
-                  <DialogTitle className="flex items-center">
-                    <Lightbulb className="w-5 h-5 mr-2 text-yellow-600" />
-                    Recomendações IA
-                  </DialogTitle>
-                </DialogHeader>
-                <div className="space-y-3 max-h-96 overflow-y-auto">
-                  {recommendations.length > 0 ? (
-                    recommendations.map((recommendation, index) => (
-                      <div 
-                        key={index} 
-                        className="p-3 bg-yellow-50 rounded-lg border border-yellow-200"
-                      >
-                        <p className="text-sm font-medium text-gray-900">{recommendation}</p>
-                      </div>
-                    ))
-                  ) : (
-                    <p className="text-gray-500 text-center py-4">
-                      Nenhuma recomendação disponível. Toque uma música primeiro!
-                    </p>
-                  )}
-                </div>
-              </DialogContent>
-            </Dialog>
+            {/* Enhanced AI Recommendations Dialog */}
+            <RecommendationsDialog
+              isOpen={showRecommendations}
+              onClose={() => setShowRecommendations(false)}
+              recommendations={recommendations}
+              onAddToPlaylist={handleAddRecommendationsToPlaylist}
+              loading={loading}
+            />
           </div>
         </div>
         
