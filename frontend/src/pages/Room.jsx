@@ -693,11 +693,28 @@ const Room = () => {
                         {roomData.current_song.title}
                       </h2>
                       <p className="text-xl text-gray-600">por {roomData.current_song.artist}</p>
-                      <div className="flex items-center space-x-4 mt-2">
-                        <Badge variant="outline">Tom: {roomData.current_song.key}</Badge>
-                        <Badge variant="outline">{roomData.current_song.genre}</Badge>
-                        {roomData.current_song.tempo && (
-                          <Badge variant="outline">{roomData.current_song.tempo} BPM</Badge>
+                      <div className="flex items-center justify-between mt-3">
+                        <div className="flex items-center space-x-4">
+                          <Badge variant="outline">Tom: {roomData.current_song.key}</Badge>
+                          <Badge variant="outline">{roomData.current_song.genre}</Badge>
+                          {roomData.current_song.tempo && (
+                            <Badge variant="outline">{roomData.current_song.tempo} BPM</Badge>
+                          )}
+                        </div>
+                        
+                        {isAdmin && (
+                          <Button
+                            onClick={() => {
+                              setTransposeForm({ from_key: roomData.current_song.key, to_key: '' });
+                              setShowTranspose(true);
+                            }}
+                            size="sm"
+                            variant="outline"
+                            className="border-amber-200 hover:bg-amber-50"
+                          >
+                            <RotateCcw className="w-4 h-4 mr-1" />
+                            Mudar Tom
+                          </Button>
                         )}
                       </div>
                     </div>
