@@ -247,6 +247,109 @@ const Room = () => {
     }
   };
 
+  const handleGenerateAIRepertoire = async (e) => {
+    e.preventDefault();
+    if (!aiRepertoireForm.style) {
+      toast.error('Selecione o estilo musical');
+      return;
+    }
+    
+    setLoading(true);
+    try {
+      const repertoire = await api.generateAIRepertoire(roomId, aiRepertoireForm, token);
+      toast.success(`Repertório de ${repertoire.total_songs} músicas gerado pela IA!`);
+      setShowAIRepertoire(false);
+      // Show repertoire in recommendations
+      setRecommendations(repertoire.repertoire.map(song => `${song.title} - ${song.artist}`));
+      setShowRecommendations(true);
+    } catch (error) {
+      console.error('Error generating AI repertoire:', error);
+      toast.error('Erro ao gerar repertório pela IA');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const startRecording = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ 
+        audio: true, 
+        video: false 
+      });
+      
+      const recorder = new MediaRecorder(stream);
+      const chunks = [];
+      
+      recorder.ondataavailable = (event) => {
+        if (event.data.size > 0) {
+          chunks.push(event.data);
+        }
+      };
+      
+      recorder.onstop = async () => {
+        const blob = new Blob(chunks, { type: 'audio/webm' });
+        const duration = Math.floor((Date.now() - recordingStartTime) / 1000);
+        
+        try {
+          await api.stopRecording(roomId, recordingId, duration, token);
+          toast.success('Gravação finalizada!');
+          loadRecordings();
+        } catch (error) {
+          console.error('Error stopping recording:', error);
+        }
+        
+        // Stop all tracks
+        stream.getTracks().forEach(track => track.stop());
+      };
+      
+      setMediaRecorder(recorder);
+      
+      // Start recording on backend
+      const response = await api.startRecording(roomId, token);
+      setRecordingId(response.recording_id);
+      setRecordingStartTime(Date.now());
+      
+      recorder.start(1000); // Record in 1-second chunks
+      setIsRecording(true);
+      toast.success('Gravação iniciada!');
+      
+    } catch (error) {
+      console.error('Error starting recording:', error);
+      toast.error('Erro ao iniciar gravação. Verifique o microfone.');
+    }
+  };
+
+  const stopRecording = () => {
+    if (mediaRecorder && mediaRecorder.state === 'recording') {
+      mediaRecorder.stop();
+      setIsRecording(false);
+      setMediaRecorder(null);
+      setRecordingId(null);
+      setRecordingStartTime(null);
+    }
+  };
+
+  const loadRecordings = async () => {
+    try {
+      const data = await api.getRecordings(roomId, token);
+      setRecordings(data.recordings);
+    } catch (error) {
+      console.error('Error loading recordings:', error);
+    }
+  };
+
+  const togglePresentationMode = async () => {
+    const newMode = !presentationMode;
+    try {
+      await api.togglePresentationMode(roomId, newMode, token);
+      setPresentationMode(newMode);
+      toast.success(`Modo apresentação ${newMode ? 'ativado' : 'desativado'}`);
+    } catch (error) {
+      console.error('Error toggling presentation mode:', error);
+      toast.error('Erro ao alterar modo apresentação');
+    }
+  };
+
   const copyRoomCode = () => {
     navigator.clipboard.writeText(roomData.room.code);
     toast.success('Código copiado para área de transferência!');
