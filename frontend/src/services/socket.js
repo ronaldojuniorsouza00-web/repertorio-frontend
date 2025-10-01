@@ -116,6 +116,43 @@ class SocketService {
     }
   }
 
+  // Collaborative Recording Events
+  onRecordingStarted(callback) {
+    if (this.socket) {
+      this.socket.on('recording_started', callback);
+    }
+  }
+
+  onRecordingStopped(callback) {
+    if (this.socket) {
+      this.socket.on('recording_stopped', callback);
+    }
+  }
+
+  onRecordingPlay(callback) {
+    if (this.socket) {
+      this.socket.on('recording_play', callback);
+    }
+  }
+
+  onRecordingPause(callback) {
+    if (this.socket) {
+      this.socket.on('recording_pause', callback);
+    }
+  }
+
+  onRecordingVolumeChanged(callback) {
+    if (this.socket) {
+      this.socket.on('recording_volume_changed', callback);
+    }
+  }
+
+  onRecordingDeleted(callback) {
+    if (this.socket) {
+      this.socket.on('recording_deleted', callback);
+    }
+  }
+
   // Remove listeners
   removeListener(event, callback) {
     if (this.socket) {
