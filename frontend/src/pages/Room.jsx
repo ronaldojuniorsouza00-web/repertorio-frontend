@@ -33,6 +33,7 @@ import IntelligentSearch from '../components/IntelligentSearch';
 import AudioRecognition from '../components/AudioRecognition';
 import RecommendationsDialog from '../components/RecommendationsDialog';
 import NextSongBar from '../components/NextSongBar';
+import CollaborativeRecording from '../components/CollaborativeRecording';
 import { SmartLoading } from '../components/LoadingStates';
 
 const Room = () => {
