@@ -14,7 +14,6 @@ import { api, useAuth } from '../App';
 const Dashboard = () => {
   const { user, token, logout } = useAuth();
   const navigate = useNavigate();
-  const [instruments, setInstruments] = useState([]);
   const [showCreateRoom, setShowCreateRoom] = useState(false);
   const [showJoinRoom, setShowJoinRoom] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -24,12 +23,8 @@ const Dashboard = () => {
   });
   
   const [joinRoomForm, setJoinRoomForm] = useState({
-    room_code: '',
-    instrument: ''
+    room_code: ''
   });
-  
-  const [showInstrumentSelector, setShowInstrumentSelector] = useState(false);
-  const [pendingRoomCode, setPendingRoomCode] = useState('');
 
   useEffect(() => {
     loadInstruments();
