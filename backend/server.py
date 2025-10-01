@@ -638,19 +638,12 @@ async def join_room(join_data: JoinRoom, current_user: User = Depends(get_curren
         "user_id": current_user.id
     })
     
-    if existing_member:
-        # Update instrument
-        await db.room_members.update_one(
-            {"room_id": room["id"], "user_id": current_user.id},
-            {"$set": {"instrument": join_data.instrument}}
-        )
-    else:
-        # Add new member
+    if not existing_member:
+        # Add new member (no instrument needed anymore)
         member = RoomMember(
             room_id=room["id"],
             user_id=current_user.id,
-            user_name=current_user.name,
-            instrument=join_data.instrument
+            user_name=current_user.name
         )
         await db.room_members.insert_one(member.dict())
     
