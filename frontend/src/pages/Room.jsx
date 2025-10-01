@@ -465,16 +465,16 @@ const Room = () => {
             </div>
             
             <div className="flex items-center space-x-3">
-              {/* Recording Controls */}
+              {/* Collaborative Recording */}
               <Button 
-                onClick={isRecording ? stopRecording : startRecording}
-                variant={isRecording ? "destructive" : "outline"}
+                onClick={() => setShowCollaborativeRecording(true)}
+                variant="outline"
                 size="sm"
-                className={isRecording ? "" : "border-red-200 hover:bg-red-50 text-red-600"}
-                data-testid="recording-button"
+                className="border-purple-200 hover:bg-purple-50 text-purple-600"
+                data-testid="collaborative-recording-button"
               >
-                <div className={`w-3 h-3 mr-2 rounded-full ${isRecording ? 'bg-white animate-pulse' : 'bg-red-600'}`} />
-                {isRecording ? 'Parar' : 'Gravar'}
+                <Users className="w-4 h-4 mr-2" />
+                Gravações
               </Button>
               
               {/* Presentation Mode */}
