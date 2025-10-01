@@ -970,7 +970,7 @@ async def pause_recording(
 async def set_recording_volume(
     room_id: str, 
     recording_id: str,
-    volume: float,
+    volume: float = Query(..., description="Volume level between 0 and 1"),
     current_user: User = Depends(get_current_user)
 ):
     if volume < 0 or volume > 1:
