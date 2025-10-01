@@ -478,6 +478,34 @@ class MusicAPIService:
                 }
             ]
 
+    async def _ai_intelligent_search_fast(self, query: str) -> List[Dict[str, Any]]:
+        """Fast AI-powered search with shorter prompts"""
+        try:
+            chat = LlmChat(
+                api_key=self.llm_key,
+                session_id=f"search_{hashlib.md5(query.encode()).hexdigest()[:8]}",
+                system_message="Responda rapidamente com músicas reais."
+            ).with_model("openai", "gpt-5")
+            
+            message = UserMessage(
+                text=f"""Busca: "{query}"
+                
+                Liste 5 músicas reais em JSON:
+                [
+                    {{"title": "Nome Real", "artist": "Artista Real", "genre": "Gênero", "year": "Ano", "popularity": 8}}
+                ]
+                
+                APENAS JSON, sem texto adicional."""
+            )
+            
+            response = await chat.send_message(message)
+            results = json.loads(response)
+            return results if isinstance(results, list) else []
+            
+        except Exception as e:
+            logging.error(f"Fast AI search error: {e}")
+            return []
+
     async def _ai_intelligent_search(self, query: str) -> List[Dict[str, Any]]:
         """AI-powered song search as fallback"""
         try:
