@@ -366,6 +366,46 @@ const Room = () => {
     }
   };
 
+  const loadRoomSettings = async () => {
+    try {
+      const settings = await api.getRoomSettings(roomId, token);
+      setRoomSettings(settings);
+      setCurrentTempo(settings.current_tempo || 120);
+      setFontSize(settings.font_size || 16);
+      setPresentationMode(settings.presentation_mode || false);
+    } catch (error) {
+      console.error('Error loading room settings:', error);
+    }
+  };
+
+  const updateSettings = async (newSettings) => {
+    try {
+      await api.updateRoomSettings(roomId, newSettings, token);
+      await loadRoomSettings();
+      toast.success('Configurações atualizadas!');
+    } catch (error) {
+      console.error('Error updating settings:', error);
+      toast.error('Erro ao atualizar configurações');
+    }
+  };
+
+  const handleTempoChange = (value) => {
+    const newTempo = value[0];
+    setCurrentTempo(newTempo);
+    updateSettings({ tempo: newTempo });
+  };
+
+  const handleFontSizeChange = (value) => {
+    const newSize = value[0];
+    setFontSize(newSize);
+    updateSettings({ font_size: newSize });
+  };
+
+  const handleKeyChange = (newKey) => {
+    updateSettings({ key: newKey });
+    setShowTranspose(false);
+  };
+
   const copyRoomCode = () => {
     navigator.clipboard.writeText(roomData.room.code);
     toast.success('Código copiado para área de transferência!');
