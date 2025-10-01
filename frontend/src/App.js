@@ -45,6 +45,12 @@ export const api = {
     });
     return response.data;
   },
+  intelligentSearch: async (query, token) => {
+    const response = await axios.post(`${API}/songs/intelligent-search`, { query }, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    return response.data;
+  },
   getSong: async (songId, token) => {
     const response = await axios.get(`${API}/songs/${songId}`, {
       headers: { Authorization: `Bearer ${token}` }
