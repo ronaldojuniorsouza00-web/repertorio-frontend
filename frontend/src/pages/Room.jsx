@@ -304,15 +304,26 @@ const Room = () => {
     
     setLoading(true);
     try {
+      // Show immediate feedback
+      toast.info('🤖 IA criando seu repertório personalizado...');
+      
       const repertoire = await api.generateAIRepertoire(roomId, aiRepertoireForm, token);
-      toast.success(`Repertório de ${repertoire.total_songs} músicas gerado pela IA!`);
+      
+      toast.success(`🎵 Repertório de ${repertoire.total_songs} músicas criado em segundos!`);
       setShowAIRepertoire(false);
-      // Show repertoire in recommendations
+      
+      // Show repertoire in recommendations dialog
       setRecommendations(repertoire.repertoire.map(song => `${song.title} - ${song.artist}`));
       setShowRecommendations(true);
+      
     } catch (error) {
       console.error('Error generating AI repertoire:', error);
-      toast.error('Erro ao gerar repertório pela IA');
+      
+      if (error.response?.status === 408) {
+        toast.error('⏰ Geração do repertório demorou muito. Tente um estilo mais específico.');
+      } else {
+        toast.error('Erro ao gerar repertório pela IA');
+      }
     } finally {
       setLoading(false);
     }
