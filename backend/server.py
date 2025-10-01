@@ -338,6 +338,43 @@ async def generate_instrument_notation(song: Song, instrument: str) -> str:
         logging.error(f"Error generating notation: {e}")
         return f"Notação básica para {instrument} não disponível no momento"
 
+# Socket.IO Event Handlers
+@sio.event
+async def connect(sid, environ, auth):
+    print(f"Client connected: {sid}")
+
+@sio.event
+async def disconnect(sid):
+    print(f"Client disconnected: {sid}")
+
+@sio.event
+async def join_room(sid, data):
+    room_id = data.get('room_id')
+    if room_id:
+        await sio.enter_room(sid, room_id)
+        await sio.emit('user_joined', {'user_id': data.get('user_id'), 'user_name': data.get('user_name')}, room=room_id)
+
+@sio.event
+async def leave_room(sid, data):
+    room_id = data.get('room_id')
+    if room_id:
+        await sio.leave_room(sid, room_id)
+        await sio.emit('user_left', {'user_id': data.get('user_id')}, room=room_id)
+
+@sio.event
+async def song_changed(sid, data):
+    room_id = data.get('room_id')
+    song_data = data.get('song')
+    if room_id:
+        await sio.emit('song_changed', {'song': song_data}, room=room_id)
+
+@sio.event
+async def transpose_changed(sid, data):
+    room_id = data.get('room_id')
+    new_key = data.get('new_key')
+    if room_id and new_key:
+        await sio.emit('transpose_changed', {'new_key': new_key}, room=room_id)
+
 # Authentication Routes
 @api_router.post("/auth/register", response_model=Token)
 async def register(user_data: UserCreate):
