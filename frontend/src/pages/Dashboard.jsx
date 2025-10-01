@@ -227,26 +227,14 @@ const Dashboard = () => {
                       />
                     </div>
                     
-                    <div className="space-y-2">
-                      <Label htmlFor="instrument-select">Seu Instrumento</Label>
-                      <Select 
-                        value={joinRoomForm.instrument} 
-                        onValueChange={(value) => setJoinRoomForm({...joinRoomForm, instrument: value})}
-                      >
-                        <SelectTrigger 
-                          className="border-amber-200 focus:border-amber-500 focus:ring-amber-500"
-                          data-testid="instrument-select"
-                        >
-                          <SelectValue placeholder="Selecione seu instrumento" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {instruments.map((instrument) => (
-                            <SelectItem key={instrument.name} value={instrument.name}>
-                              {instrument.name} ({instrument.category})
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                    <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+                      <div className="flex items-center space-x-2 mb-2">
+                        <Music className="w-5 h-5 text-amber-600" />
+                        <span className="font-medium text-amber-800">Seleção de Instrumento</span>
+                      </div>
+                      <p className="text-sm text-amber-700">
+                        Após inserir o código, você será direcionado para escolher seu instrumento e receberá notações específicas para ele.
+                      </p>
                     </div>
                     
                     <Button 
