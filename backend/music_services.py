@@ -402,36 +402,81 @@ class MusicAPIService:
         return keys[key_number] if 0 <= key_number < 12 else 'C'
 
     async def intelligent_search(self, query: str) -> List[Dict[str, Any]]:
-        """AI + Spotify powered search"""
+        """Fast intelligent search with caching"""
+        # Check cache first
+        if self.cache_service:
+            cached_results = await self.cache_service.get_cached_result(
+                "intelligent_search",
+                {"query": query.lower()},
+                max_age_hours=24  # Cache searches for 24 hours
+            )
+            if cached_results:
+                logging.info(f"Cache hit for intelligent search: {query}")
+                return cached_results
+        
         results = []
         
         try:
-            # First try Spotify search
+            # Spotify search is usually fast
             if self.spotify:
-                spotify_results = self.spotify.search(q=query, type='track', limit=8)
-                
-                for track in spotify_results['tracks']['items']:
-                    results.append({
-                        "title": track['name'],
-                        "artist": track['artists'][0]['name'],
-                        "genre": "Popular",  # Spotify doesn't always provide genre in search
-                        "year": track['album']['release_date'][:4],
-                        "popularity": track['popularity'] // 10,  # Convert to 1-10 scale
-                        "album": track['album']['name'],
-                        "preview_url": track['preview_url']
-                    })
+                try:
+                    spotify_results = await asyncio.wait_for(
+                        asyncio.get_event_loop().run_in_executor(
+                            self.thread_pool,
+                            lambda: self.spotify.search(q=query, type='track', limit=8)
+                        ),
+                        timeout=3.0  # 3 second timeout for Spotify
+                    )
+                    
+                    for track in spotify_results['tracks']['items']:
+                        results.append({
+                            "title": track['name'],
+                            "artist": track['artists'][0]['name'],
+                            "genre": "Popular",
+                            "year": track['album']['release_date'][:4] if track['album']['release_date'] else "Unknown",
+                            "popularity": min(10, max(1, track['popularity'] // 10)),  # 1-10 scale
+                            "album": track['album']['name'],
+                            "preview_url": track['preview_url']
+                        })
+                        
+                except asyncio.TimeoutError:
+                    logging.warning("Spotify search timeout")
             
-            # If Spotify didn't return enough results, use AI
+            # Only use AI if Spotify failed or returned few results
             if len(results) < 3:
-                ai_results = await self._ai_intelligent_search(query)
-                results.extend(ai_results)
+                try:
+                    ai_results = await asyncio.wait_for(
+                        self._ai_intelligent_search_fast(query),
+                        timeout=5.0  # 5 second timeout for AI
+                    )
+                    results.extend(ai_results)
+                except asyncio.TimeoutError:
+                    logging.warning("AI search timeout")
             
-            return results[:8]  # Limit to 8 results
+            # Limit and cache results
+            final_results = results[:8]
+            
+            if self.cache_service and final_results:
+                await self.cache_service.set_cached_result(
+                    "intelligent_search",
+                    {"query": query.lower()},
+                    final_results
+                )
+            
+            return final_results
             
         except Exception as e:
             logging.error(f"Intelligent search error: {e}")
-            # Fallback to AI only
-            return await self._ai_intelligent_search(query)
+            # Return basic fallback
+            return [
+                {
+                    "title": f"Busca por: {query}",
+                    "artist": "Resultados não encontrados",
+                    "genre": "Unknown",
+                    "year": "2024",
+                    "popularity": 5
+                }
+            ]
 
     async def _ai_intelligent_search(self, query: str) -> List[Dict[str, Any]]:
         """AI-powered song search as fallback"""
