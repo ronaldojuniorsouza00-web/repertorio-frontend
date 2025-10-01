@@ -101,3 +101,76 @@
 #====================================================================================================
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
+
+user_problem_statement: |
+  O usuário solicitou duas mudanças principais:
+  1. Remover completamente os ícones de instrumentos da tela principal - usuário não precisará mais selecionar instrumentos
+  2. Implementar sistema de gravação colaborativa onde cada usuário pode gravar e nomear suas gravações, outros podem ouvir e ensaiar por cima dessas gravações
+  
+backend:
+  - task: "Remove instrument selection system"
+    implemented: false
+    working: "NA"
+    file: "server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Starting to remove instrument selector system from backend"
+
+  - task: "Implement collaborative recording system"
+    implemented: false 
+    working: "NA"
+    file: "server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Need to create enhanced recording system with user names and multiple playback"
+
+frontend:
+  - task: "Remove InstrumentSelector component"
+    implemented: false
+    working: "NA"
+    file: "components/InstrumentSelector.jsx, pages/Dashboard.jsx, pages/Room.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Starting removal of instrument selector from all frontend components"
+
+  - task: "Create collaborative recording interface"
+    implemented: false
+    working: "NA" 
+    file: "components/CollaborativeRecording.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Need to create new component for recording with naming and multi-playback"
+
+metadata:
+  created_by: "main_agent"
+  version: "1.0"
+  test_sequence: 0
+  run_ui: false
+
+test_plan:
+  current_focus:
+    - "Remove instrument selection system"
+    - "Implement collaborative recording system"
+  stuck_tasks: []
+  test_all: false
+  test_priority: "high_first"
+
+agent_communication:
+  - agent: "main"
+    message: "Starting implementation of collaborative recording system and removal of instrument selection"
