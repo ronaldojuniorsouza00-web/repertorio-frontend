@@ -1126,6 +1126,182 @@ async def get_room_settings(room_id: str, current_user: User = Depends(get_curre
         "presentation_mode": room.get("presentation_mode", False)
     }
 
+# Playlist/Repertoire Management
+@api_router.post("/rooms/{room_id}/playlist/add/{song_id}")
+async def add_song_to_playlist(
+    room_id: str,
+    song_id: str,
+    current_user: User = Depends(get_current_user)
+):
+    room = await db.rooms.find_one({"id": room_id})
+    if not room:
+        raise HTTPException(status_code=404, detail="Room not found")
+    
+    if room["admin_id"] != current_user.id:
+        raise HTTPException(status_code=403, detail="Only admin can manage playlist")
+    
+    # Check if song exists
+    song = await db.songs.find_one({"id": song_id})
+    if not song:
+        raise HTTPException(status_code=404, detail="Song not found")
+    
+    # Add to playlist if not already there
+    current_playlist = room.get("playlist", [])
+    if song_id not in current_playlist:
+        current_playlist.append(song_id)
+        await db.rooms.update_one(
+            {"id": room_id},
+            {"$set": {"playlist": current_playlist}}
+        )
+        
+        # If no current song, set this as current
+        if not room.get("current_song_id"):
+            await db.rooms.update_one(
+                {"id": room_id},
+                {"$set": {"current_song_id": song_id}}
+            )
+        # If no next song and this isn't current, set as next
+        elif not room.get("next_song_id") and song_id != room.get("current_song_id"):
+            await db.rooms.update_one(
+                {"id": room_id},
+                {"$set": {"next_song_id": song_id}}
+            )
+        
+        # Emit real-time update
+        await sio.emit('playlist_updated', {
+            'action': 'song_added',
+            'song_id': song_id,
+            'song_title': song["title"],
+            'artist': song["artist"],
+            'updated_by': current_user.name
+        }, room=room_id)
+    
+    return {"message": "Song added to playlist", "playlist_length": len(current_playlist)}
+
+@api_router.get("/rooms/{room_id}/playlist")
+async def get_playlist(room_id: str, current_user: User = Depends(get_current_user)):
+    room = await db.rooms.find_one({"id": room_id})
+    if not room:
+        raise HTTPException(status_code=404, detail="Room not found")
+    
+    playlist_songs = []
+    for song_id in room.get("playlist", []):
+        song = await db.songs.find_one({"id": song_id})
+        if song:
+            playlist_songs.append(Song(**song))
+    
+    return {
+        "playlist": playlist_songs,
+        "current_song_id": room.get("current_song_id"),
+        "next_song_id": room.get("next_song_id")
+    }
+
+@api_router.delete("/rooms/{room_id}/playlist/{song_id}")
+async def remove_song_from_playlist(
+    room_id: str,
+    song_id: str,
+    current_user: User = Depends(get_current_user)
+):
+    room = await db.rooms.find_one({"id": room_id})
+    if not room:
+        raise HTTPException(status_code=404, detail="Room not found")
+    
+    if room["admin_id"] != current_user.id:
+        raise HTTPException(status_code=403, detail="Only admin can manage playlist")
+    
+    current_playlist = room.get("playlist", [])
+    if song_id in current_playlist:
+        current_playlist.remove(song_id)
+        
+        update_data = {"playlist": current_playlist}
+        
+        # If removing current song, advance to next
+        if room.get("current_song_id") == song_id:
+            next_song = current_playlist[0] if current_playlist else None
+            update_data["current_song_id"] = next_song
+            update_data["next_song_id"] = current_playlist[1] if len(current_playlist) > 1 else None
+        
+        # If removing next song, set new next
+        elif room.get("next_song_id") == song_id:
+            current_index = current_playlist.index(room.get("current_song_id")) if room.get("current_song_id") in current_playlist else -1
+            next_index = current_index + 1 if current_index >= 0 else 0
+            update_data["next_song_id"] = current_playlist[next_index] if next_index < len(current_playlist) else None
+        
+        await db.rooms.update_one({"id": room_id}, {"$set": update_data})
+        
+        # Emit real-time update
+        await sio.emit('playlist_updated', {
+            'action': 'song_removed',
+            'song_id': song_id,
+            'updated_by': current_user.name
+        }, room=room_id)
+    
+    return {"message": "Song removed from playlist"}
+
+@api_router.post("/rooms/{room_id}/playlist/next")
+async def next_song_in_playlist(
+    room_id: str,
+    current_user: User = Depends(get_current_user)
+):
+    room = await db.rooms.find_one({"id": room_id})
+    if not room:
+        raise HTTPException(status_code=404, detail="Room not found")
+    
+    if room["admin_id"] != current_user.id:
+        raise HTTPException(status_code=403, detail="Only admin can control playlist")
+    
+    playlist = room.get("playlist", [])
+    current_song_id = room.get("current_song_id")
+    
+    if not playlist:
+        raise HTTPException(status_code=400, detail="Playlist is empty")
+    
+    try:
+        current_index = playlist.index(current_song_id) if current_song_id else -1
+        next_index = (current_index + 1) % len(playlist)
+        next_next_index = (next_index + 1) % len(playlist)
+        
+        new_current = playlist[next_index]
+        new_next = playlist[next_next_index] if len(playlist) > 1 else None
+        
+        await db.rooms.update_one(
+            {"id": room_id},
+            {"$set": {
+                "current_song_id": new_current,
+                "next_song_id": new_next
+            }}
+        )
+        
+        # Get song info for notification
+        song = await db.songs.find_one({"id": new_current})
+        
+        # Emit real-time update
+        await sio.emit('playlist_updated', {
+            'action': 'song_changed',
+            'new_current_song_id': new_current,
+            'new_next_song_id': new_next,
+            'song_title': song["title"] if song else "Unknown",
+            'artist': song["artist"] if song else "Unknown",
+            'updated_by': current_user.name
+        }, room=room_id)
+        
+        return {"message": "Advanced to next song", "current_song_id": new_current}
+        
+    except ValueError:
+        # Current song not in playlist, just start from beginning
+        new_current = playlist[0]
+        new_next = playlist[1] if len(playlist) > 1 else None
+        
+        await db.rooms.update_one(
+            {"id": room_id},
+            {"$set": {
+                "current_song_id": new_current,
+                "next_song_id": new_next
+            }}
+        )
+        
+        return {"message": "Started playlist from beginning", "current_song_id": new_current}
+
 # Basic Routes
 @api_router.get("/")
 async def root():
