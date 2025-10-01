@@ -1270,6 +1270,14 @@ const Room = () => {
             toast.success('Música adicionada ao repertório!');
           }}
         />
+        
+        {/* Fixed Next Song Bar */}
+        <NextSongBar
+          nextSong={roomData?.next_song}
+          isAdmin={isAdmin}
+          onPlayNext={() => roomData?.next_song && handleSetCurrentSong(roomData.next_song.id)}
+          onAdvancePlaylist={handleNextSong}
+        />
       </div>
     </div>
   );
