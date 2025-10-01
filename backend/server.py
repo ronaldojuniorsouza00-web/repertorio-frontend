@@ -145,12 +145,10 @@ class RoomMember(BaseModel):
     room_id: str
     user_id: str
     user_name: str
-    instrument: str
     joined_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 class JoinRoom(BaseModel):
     room_code: str
-    instrument: str
 
 class MusicAnalysis(BaseModel):
     song_id: str
