@@ -936,7 +936,10 @@ const Room = () => {
                     
                     <TabsContent value="chords" className="mt-4">
                       <div className="chord-display bg-gray-50 p-6 rounded-lg max-h-96 overflow-y-auto">
-                        <pre className="whitespace-pre-wrap font-mono text-gray-800 leading-relaxed">
+                        <pre 
+                          className="whitespace-pre-wrap font-mono text-gray-800 leading-relaxed"
+                          style={{ fontSize: `${fontSize}px`, lineHeight: '1.6' }}
+                        >
                           {roomData.current_song.chords}
                         </pre>
                       </div>
