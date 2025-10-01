@@ -409,6 +409,29 @@ const Room = () => {
             </div>
             
             <div className="flex items-center space-x-3">
+              {/* Recording Controls */}
+              <Button 
+                onClick={isRecording ? stopRecording : startRecording}
+                variant={isRecording ? "destructive" : "outline"}
+                size="sm"
+                className={isRecording ? "" : "border-red-200 hover:bg-red-50 text-red-600"}
+                data-testid="recording-button"
+              >
+                <div className={`w-3 h-3 mr-2 rounded-full ${isRecording ? 'bg-white animate-pulse' : 'bg-red-600'}`} />
+                {isRecording ? 'Parar' : 'Gravar'}
+              </Button>
+              
+              {/* Presentation Mode */}
+              <Button 
+                onClick={togglePresentationMode}
+                variant={presentationMode ? "default" : "outline"}
+                size="sm"
+                className={presentationMode ? "bg-purple-600 hover:bg-purple-700" : "border-purple-200 hover:bg-purple-50 text-purple-600"}
+                data-testid="presentation-mode-button"
+              >
+                🎤 {presentationMode ? 'Sair do Show' : 'Modo Show'}
+              </Button>
+              
               <Button 
                 onClick={refreshRoomData}
                 variant="outline" 
