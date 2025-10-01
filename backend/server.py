@@ -529,26 +529,7 @@ async def get_song(song_id: str, current_user: User = Depends(get_current_user))
         raise HTTPException(status_code=404, detail="Song not found")
     return Song(**song)
 
-@api_router.get("/songs/{song_id}/notation/{instrument}")
-async def get_instrument_notation(
-    song_id: str, 
-    instrument: str,
-    current_user: User = Depends(get_current_user)
-):
-    song = await db.songs.find_one({"id": song_id})
-    if not song:
-        raise HTTPException(status_code=404, detail="Song not found")
-    
-    song_obj = Song(**song)
-    notation = await generate_instrument_notation(song_obj, instrument)
-    
-    return {
-        "instrument": instrument,
-        "song_title": song_obj.title,
-        "artist": song_obj.artist,
-        "notation": notation,
-        "key": song_obj.key
-    }
+# Instrument notation endpoint removed - no longer needed for collaborative system
 
 @api_router.post("/songs/{song_id}/transpose")
 async def transpose_song(
