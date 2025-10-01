@@ -1106,18 +1106,34 @@ async def add_song_to_playlist(
             {"$set": {"playlist": current_playlist}}
         )
         
-        # If no current song, set this as current
+        # Smart playlist management
         if not room.get("current_song_id"):
+            # No current song, set this as current and next as the second song
             await db.rooms.update_one(
                 {"id": room_id},
-                {"$set": {"current_song_id": song_id}}
+                {"$set": {
+                    "current_song_id": song_id,
+                    "next_song_id": current_playlist[1] if len(current_playlist) > 1 else None
+                }}
             )
-        # If no next song and this isn't current, set as next
         elif not room.get("next_song_id") and song_id != room.get("current_song_id"):
+            # Set as next song
             await db.rooms.update_one(
                 {"id": room_id},
                 {"$set": {"next_song_id": song_id}}
             )
+        else:
+            # Update next song to always show upcoming song in playlist
+            current_song_id = room.get("current_song_id")
+            if current_song_id in current_playlist:
+                current_index = current_playlist.index(current_song_id)
+                next_index = (current_index + 1) % len(current_playlist)
+                next_song_id = current_playlist[next_index] if len(current_playlist) > 1 else None
+                
+                await db.rooms.update_one(
+                    {"id": room_id},
+                    {"$set": {"next_song_id": next_song_id}}
+                )
         
         # Emit real-time update
         await sio.emit('playlist_updated', {
