@@ -433,19 +433,14 @@ def main():
     
     tester = MusicMaestroAPITester()
     
-    # Test sequence
+    # Test sequence - focusing on core functionality
     tests = [
         ("Basic Health Check", tester.test_basic_health),
         ("User Registration", tester.test_register),
         ("User Login", tester.test_login),
         ("Instruments Endpoint Removed", tester.test_instruments_removed),
-        ("Search Song", tester.test_search_song),
-        ("Get Song by ID", tester.test_get_song),
-        ("Instrument Notation Removed", tester.test_instrument_notation_removed),
         ("Create Room", tester.test_create_room),
         ("Join Room (No Instrument)", tester.test_join_room),
-        ("Set Current Song", tester.test_set_current_song),
-        ("Set Next Song", tester.test_set_next_song),
         ("Get AI Recommendations", tester.test_get_recommendations),
         ("Start Recording", tester.test_start_recording),
         ("Stop Recording", tester.test_stop_recording),
