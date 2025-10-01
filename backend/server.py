@@ -768,10 +768,7 @@ async def sync_room_state(room_id: str, current_user: User = Depends(get_current
     
     return {"message": "Room state synchronized"}
 
-# Instruments Route
-@api_router.get("/instruments")
-async def get_instruments():
-    return INSTRUMENTS
+# Instruments endpoint removed - no longer needed for collaborative system
 
 # AI Recommendations
 @api_router.get("/rooms/{room_id}/recommendations")
