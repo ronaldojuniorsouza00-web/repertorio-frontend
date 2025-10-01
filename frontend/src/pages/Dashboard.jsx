@@ -9,6 +9,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Music, Users, Plus, LogOut, Guitar } from 'lucide-react';
 import { toast } from 'sonner';
 import { api, useAuth } from '../App';
+import InstrumentSelector from '../components/InstrumentSelector';
 
 const Dashboard = () => {
   const { user, token, logout } = useAuth();
