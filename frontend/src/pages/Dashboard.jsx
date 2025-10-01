@@ -27,6 +27,9 @@ const Dashboard = () => {
     room_code: '',
     instrument: ''
   });
+  
+  const [showInstrumentSelector, setShowInstrumentSelector] = useState(false);
+  const [pendingRoomCode, setPendingRoomCode] = useState('');
 
   useEffect(() => {
     loadInstruments();
