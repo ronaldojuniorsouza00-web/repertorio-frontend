@@ -612,6 +612,107 @@ const Room = () => {
                     Busca IA
                   </Button>
                   
+                  <Dialog open={showPlaylist} onOpenChange={setShowPlaylist}>
+                    <DialogTrigger asChild>
+                      <Button 
+                        variant="outline"
+                        className="border-blue-200 hover:bg-blue-50 text-blue-600"
+                        data-testid="playlist-button"
+                      >
+                        <Music className="w-4 h-4 mr-2" />
+                        Playlist ({playlist.length})
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="max-w-2xl">
+                      <DialogHeader>
+                        <DialogTitle className="flex items-center justify-between">
+                          <span>Playlist da Sala</span>
+                          {isAdmin && (
+                            <Button
+                              onClick={handleNextSong}
+                              size="sm"
+                              className="bg-blue-600 hover:bg-blue-700 text-white"
+                              data-testid="next-song-playlist-button"
+                            >
+                              <SkipForward className="w-4 h-4 mr-1" />
+                              Próxima
+                            </Button>
+                          )}
+                        </DialogTitle>
+                      </DialogHeader>
+                      
+                      <div className="space-y-4 max-h-96 overflow-y-auto">
+                        {playlist.length > 0 ? (
+                          playlist.map((song, index) => (
+                            <Card key={song.id} className="p-4">
+                              <div className="flex items-center justify-between">
+                                <div className="flex items-center space-x-3">
+                                  <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-semibold text-sm">
+                                    {index + 1}
+                                  </div>
+                                  <div>
+                                    <h4 className="font-semibold text-gray-900">{song.title}</h4>
+                                    <p className="text-gray-600 text-sm">por {song.artist}</p>
+                                    <div className="flex items-center space-x-2 mt-1">
+                                      <Badge variant="outline" className="text-xs">
+                                        {song.key}
+                                      </Badge>
+                                      <Badge variant="outline" className="text-xs">
+                                        {song.genre}
+                                      </Badge>
+                                      {roomData?.current_song?.id === song.id && (
+                                        <Badge className="bg-green-600 text-white text-xs">
+                                          ▶ Tocando
+                                        </Badge>
+                                      )}
+                                      {roomData?.next_song?.id === song.id && (
+                                        <Badge className="bg-orange-600 text-white text-xs">
+                                          → Próxima
+                                        </Badge>
+                                      )}
+                                    </div>
+                                  </div>
+                                </div>
+                                
+                                <div className="flex items-center space-x-2">
+                                  {isAdmin && (
+                                    <>
+                                      <Button
+                                        onClick={() => handleSetCurrentSong(song.id)}
+                                        size="sm"
+                                        variant="outline"
+                                        className="text-xs"
+                                      >
+                                        <Play className="w-3 h-3 mr-1" />
+                                        Tocar
+                                      </Button>
+                                      <Button
+                                        onClick={() => handleRemoveFromPlaylist(song.id)}
+                                        size="sm"
+                                        variant="outline"
+                                        className="text-xs text-red-600 hover:bg-red-50"
+                                      >
+                                        ✕
+                                      </Button>
+                                    </>
+                                  )}
+                                </div>
+                              </div>
+                            </Card>
+                          ))
+                        ) : (
+                          <div className="text-center py-8">
+                            <Music className="w-12 h-12 mx-auto text-gray-400 mb-4" />
+                            <p className="text-gray-500">Nenhuma música na playlist</p>
+                            <p className="text-sm text-gray-400 mt-1">
+                              Adicione músicas para começar
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                    </DialogContent>
+                  </Dialog>
+                  
                   <Button 
                     onClick={loadRecommendations}
                     variant="outline"
