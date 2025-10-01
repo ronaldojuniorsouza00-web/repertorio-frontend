@@ -221,26 +221,7 @@ const Dashboard = () => {
           </Card>
         </div>
 
-        {/* Instruments Info */}
-        <div className="max-w-4xl mx-auto">
-          <h3 className="text-2xl font-bold text-gray-900 mb-6 text-center">
-            Instrumentos Suportados
-          </h3>
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-            {instruments.map((instrument) => (
-              <div 
-                key={instrument.name} 
-                className="text-center p-4 bg-white/70 backdrop-blur-sm rounded-xl border border-amber-200/50 shadow-sm hover:shadow-md transition-shadow"
-              >
-                <div className="w-12 h-12 mx-auto mb-2 bg-gradient-to-br from-amber-400 to-orange-500 rounded-lg flex items-center justify-center">
-                  <Guitar className="w-6 h-6 text-white" />
-                </div>
-                <h4 className="font-semibold text-gray-900 text-sm">{instrument.name}</h4>
-                <p className="text-xs text-gray-600">{instrument.category}</p>
-              </div>
-            ))}
-          </div>
-        </div>
+        {/* Sistema de colaboração sem seleção de instrumentos específicos */}
         
         {/* Instrument Selector Modal removed - no longer needed */}
       </div>
