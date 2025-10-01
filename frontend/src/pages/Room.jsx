@@ -49,18 +49,11 @@ const Room = () => {
   const [showRecommendations, setShowRecommendations] = useState(false);
   const [showTranspose, setShowTranspose] = useState(false);
   const [showAIRepertoire, setShowAIRepertoire] = useState(false);
-  const [showRecordings, setShowRecordings] = useState(false);
+  const [showCollaborativeRecording, setShowCollaborativeRecording] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
-  const [currentUserInstrument, setCurrentUserInstrument] = useState('');
-  const [instrumentNotation, setInstrumentNotation] = useState('');
   const [recommendations, setRecommendations] = useState([]);
   const [realTimeUpdates, setRealTimeUpdates] = useState([]);
-  const [isRecording, setIsRecording] = useState(false);
-  const [recordingId, setRecordingId] = useState(null);
-  const [recordings, setRecordings] = useState([]);
   const [presentationMode, setPresentationMode] = useState(false);
-  const [mediaRecorder, setMediaRecorder] = useState(null);
-  const [recordingStartTime, setRecordingStartTime] = useState(null);
   // New settings states
   const [currentTempo, setCurrentTempo] = useState(120);
   const [fontSize, setFontSize] = useState(16);
