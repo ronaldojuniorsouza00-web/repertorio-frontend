@@ -60,6 +60,8 @@ const Room = () => {
   const [currentTempo, setCurrentTempo] = useState(120);
   const [fontSize, setFontSize] = useState(16);
   const [roomSettings, setRoomSettings] = useState({});
+  const [playlist, setPlaylist] = useState([]);
+  const [showPlaylist, setShowPlaylist] = useState(false);
   
   const [songForm, setSongForm] = useState({
     title: '',
