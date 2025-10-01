@@ -1230,7 +1230,8 @@ async def next_song_in_playlist(
         next_next_index = (next_index + 1) % len(playlist)
         
         new_current = playlist[next_index]
-        new_next = playlist[next_next_index] if len(playlist) > 1 else None
+        # Always set next song if playlist has more than 1 song
+        new_next = playlist[next_next_index] if len(playlist) > 1 else playlist[0] if len(playlist) == 1 else None
         
         await db.rooms.update_one(
             {"id": room_id},
