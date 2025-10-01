@@ -51,6 +51,20 @@ export const api = {
     });
     return response.data;
   },
+  
+  // Audio Recognition
+  recognizeAudio: async (audioBlob, token) => {
+    const formData = new FormData();
+    formData.append('audio_file', audioBlob);
+    
+    const response = await axios.post(`${API}/songs/recognize-audio`, formData, {
+      headers: { 
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'multipart/form-data'
+      }
+    });
+    return response.data;
+  },
   getSong: async (songId, token) => {
     const response = await axios.get(`${API}/songs/${songId}`, {
       headers: { Authorization: `Bearer ${token}` }
