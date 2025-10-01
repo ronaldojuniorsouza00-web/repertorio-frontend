@@ -156,10 +156,7 @@ class MusicAnalysis(BaseModel):
     recommendations: List[str]
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
-class InstrumentNotation(BaseModel):
-    instrument: str
-    notation: str
-    difficulty: str  # "beginner", "intermediate", "advanced"
+# InstrumentNotation class removed - no longer needed for collaborative system
 
 class TransposeRequest(BaseModel):
     from_key: str
