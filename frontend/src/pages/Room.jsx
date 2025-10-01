@@ -603,10 +603,15 @@ const Room = () => {
                                 <SelectItem value="pop">Pop</SelectItem>
                                 <SelectItem value="mpb">MPB</SelectItem>
                                 <SelectItem value="sertanejo">Sertanejo</SelectItem>
+                                <SelectItem value="samba">Samba</SelectItem>
+                                <SelectItem value="pagode">Pagode</SelectItem>
+                                <SelectItem value="roda-de-samba">Roda de Samba</SelectItem>
                                 <SelectItem value="jazz">Jazz</SelectItem>
                                 <SelectItem value="blues">Blues</SelectItem>
                                 <SelectItem value="reggae">Reggae</SelectItem>
                                 <SelectItem value="funk">Funk</SelectItem>
+                                <SelectItem value="bossa-nova">Bossa Nova</SelectItem>
+                                <SelectItem value="forró">Forró</SelectItem>
                                 <SelectItem value="gospel">Gospel</SelectItem>
                               </SelectContent>
                             </Select>
