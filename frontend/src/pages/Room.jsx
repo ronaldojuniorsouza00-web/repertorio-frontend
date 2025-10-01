@@ -8,6 +8,7 @@ import { Badge } from '../components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '../components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
+import { Slider } from '../components/ui/slider';
 import { 
   Music, 
   Users, 
@@ -19,11 +20,16 @@ import {
   Search,
   Lightbulb,
   RefreshCw,
-  RotateCcw
+  RotateCcw,
+  Sparkles,
+  Settings,
+  Zap,
+  Type
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { api, useAuth } from '../App';
 import socketService from '../services/socket';
+import IntelligentSearch from '../components/IntelligentSearch';
 
 const Room = () => {
   const { roomId } = useParams();
