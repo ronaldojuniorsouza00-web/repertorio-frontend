@@ -40,10 +40,12 @@ const Room = () => {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [showAddSong, setShowAddSong] = useState(false);
+  const [showIntelligentSearch, setShowIntelligentSearch] = useState(false);
   const [showRecommendations, setShowRecommendations] = useState(false);
   const [showTranspose, setShowTranspose] = useState(false);
   const [showAIRepertoire, setShowAIRepertoire] = useState(false);
   const [showRecordings, setShowRecordings] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
   const [currentUserInstrument, setCurrentUserInstrument] = useState('');
   const [instrumentNotation, setInstrumentNotation] = useState('');
   const [recommendations, setRecommendations] = useState([]);
@@ -54,6 +56,10 @@ const Room = () => {
   const [presentationMode, setPresentationMode] = useState(false);
   const [mediaRecorder, setMediaRecorder] = useState(null);
   const [recordingStartTime, setRecordingStartTime] = useState(null);
+  // New settings states
+  const [currentTempo, setCurrentTempo] = useState(120);
+  const [fontSize, setFontSize] = useState(16);
+  const [roomSettings, setRoomSettings] = useState({});
   
   const [songForm, setSongForm] = useState({
     title: '',
