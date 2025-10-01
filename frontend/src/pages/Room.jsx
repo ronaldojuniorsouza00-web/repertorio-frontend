@@ -56,10 +56,49 @@ const Room = () => {
 
   useEffect(() => {
     loadRoomData();
-    // Auto-refresh every 10 seconds
-    const interval = setInterval(loadRoomData, 10000);
-    return () => clearInterval(interval);
-  }, [roomId]);
+    
+    // Join room via WebSocket
+    if (user && roomId) {
+      socketService.joinRoom(roomId, user.id, user.name);
+    }
+    
+    // Setup real-time listeners
+    const handleUserJoined = (data) => {
+      toast.success(`${data.user_name} entrou na sala`);
+      loadRoomData(); // Refresh to show new member
+    };
+    
+    const handleUserLeft = (data) => {
+      toast.info(`Usuário saiu da sala`);
+      loadRoomData(); // Refresh to remove member
+    };
+    
+    const handleSongChanged = (data) => {
+      toast.info('Música alterada pelo admin');
+      loadRoomData(); // Refresh to show new song
+    };
+    
+    const handleTransposeChanged = (data) => {
+      toast.info(`Transposição alterada para ${data.new_key}`);
+      loadRoomData(); // Refresh to show transposed content
+    };
+    
+    socketService.onUserJoined(handleUserJoined);
+    socketService.onUserLeft(handleUserLeft);
+    socketService.onSongChanged(handleSongChanged);
+    socketService.onTransposeChanged(handleTransposeChanged);
+    
+    return () => {
+      // Leave room and cleanup
+      if (user && roomId) {
+        socketService.leaveRoom(roomId, user.id);
+      }
+      socketService.removeListener('user_joined', handleUserJoined);
+      socketService.removeListener('user_left', handleUserLeft);
+      socketService.removeListener('song_changed', handleSongChanged);
+      socketService.removeListener('transpose_changed', handleTransposeChanged);
+    };
+  }, [roomId, user]);
 
   useEffect(() => {
     if (roomData?.current_song && currentUserInstrument) {
