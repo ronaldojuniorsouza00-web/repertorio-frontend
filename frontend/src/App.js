@@ -89,6 +89,18 @@ export const api = {
     });
     return response.data;
   },
+  transposeRoom: async (roomId, transposeData, token) => {
+    const response = await axios.post(`${API}/rooms/${roomId}/transpose`, transposeData, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    return response.data;
+  },
+  transposeSong: async (songId, transposeData, token) => {
+    const response = await axios.post(`${API}/songs/${songId}/transpose`, transposeData, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    return response.data;
+  },
   
   // Instruments
   getInstruments: async () => {
