@@ -613,6 +613,13 @@ const Room = () => {
                     Busca IA
                   </Button>
                   
+                  <AudioRecognition 
+                    onSongRecognized={async (songData) => {
+                      const song = await api.searchSong(songData, token);
+                      await handleAddToPlaylist(song);
+                    }}
+                  />
+                  
                   <Dialog open={showPlaylist} onOpenChange={setShowPlaylist}>
                     <DialogTrigger asChild>
                       <Button 
