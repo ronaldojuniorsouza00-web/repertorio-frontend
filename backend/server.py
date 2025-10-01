@@ -152,19 +152,67 @@ class RepertoireUpdate(BaseModel):
     action: str  # "add_song", "remove_song", "reorder", "transpose"
     data: Dict[str, Any]
 
-# Predefined instruments
+# Predefined instruments - Lista completa
 INSTRUMENTS = [
-    {"name": "Violão", "category": "Cordas", "notation_type": "chords"},
-    {"name": "Guitarra", "category": "Cordas", "notation_type": "chords"},
-    {"name": "Baixo", "category": "Cordas", "notation_type": "notes"},
-    {"name": "Bateria", "category": "Percussão", "notation_type": "rhythm"},
-    {"name": "Teclado", "category": "Teclas", "notation_type": "chords"},
-    {"name": "Piano", "category": "Teclas", "notation_type": "chords"},
-    {"name": "Cajon", "category": "Percussão", "notation_type": "rhythm"},
-    {"name": "Ukulele", "category": "Cordas", "notation_type": "chords"},
-    {"name": "Saxofone", "category": "Sopro", "notation_type": "notes"},
-    {"name": "Flauta", "category": "Sopro", "notation_type": "notes"},
-    {"name": "Trompete", "category": "Sopro", "notation_type": "notes"}
+    # Cordas
+    {"name": "Violão Clássico", "category": "Cordas", "notation_type": "chords"},
+    {"name": "Violão Folk", "category": "Cordas", "notation_type": "chords"}, 
+    {"name": "Guitarra Elétrica", "category": "Cordas", "notation_type": "chords"},
+    {"name": "Guitarra Semi-Acústica", "category": "Cordas", "notation_type": "chords"},
+    {"name": "Baixo 4 Cordas", "category": "Cordas", "notation_type": "notes"},
+    {"name": "Baixo 5 Cordas", "category": "Cordas", "notation_type": "notes"},
+    {"name": "Contrabaixo Acústico", "category": "Cordas", "notation_type": "notes"},
+    {"name": "Ukulele Soprano", "category": "Cordas", "notation_type": "chords"},
+    {"name": "Ukulele Concert", "category": "Cordas", "notation_type": "chords"},
+    {"name": "Banjo", "category": "Cordas", "notation_type": "chords"},
+    {"name": "Mandolina", "category": "Cordas", "notation_type": "notes"},
+    {"name": "Cavaquinho", "category": "Cordas", "notation_type": "chords"},
+    {"name": "Viola Caipira", "category": "Cordas", "notation_type": "chords"},
+    
+    # Teclas
+    {"name": "Piano Acústico", "category": "Teclas", "notation_type": "chords"},
+    {"name": "Piano Digital", "category": "Teclas", "notation_type": "chords"},
+    {"name": "Teclado Arranjador", "category": "Teclas", "notation_type": "chords"},
+    {"name": "Sintetizador", "category": "Teclas", "notation_type": "chords"},
+    {"name": "Órgão Hammond", "category": "Teclas", "notation_type": "chords"},
+    {"name": "Acordeon", "category": "Teclas", "notation_type": "chords"},
+    {"name": "Sanfona", "category": "Teclas", "notation_type": "chords"},
+    
+    # Percussão
+    {"name": "Bateria Completa", "category": "Percussão", "notation_type": "rhythm"},
+    {"name": "Bateria Eletrônica", "category": "Percussão", "notation_type": "rhythm"},
+    {"name": "Cajon Peruano", "category": "Percussão", "notation_type": "rhythm"},
+    {"name": "Bongô", "category": "Percussão", "notation_type": "rhythm"},
+    {"name": "Conga", "category": "Percussão", "notation_type": "rhythm"},
+    {"name": "Djembê", "category": "Percussão", "notation_type": "rhythm"},
+    {"name": "Pandeiro", "category": "Percussão", "notation_type": "rhythm"},
+    {"name": "Tamborim", "category": "Percussão", "notation_type": "rhythm"},
+    {"name": "Shaker", "category": "Percussão", "notation_type": "rhythm"},
+    {"name": "Chocalho", "category": "Percussão", "notation_type": "rhythm"},
+    
+    # Sopro
+    {"name": "Saxofone Alto", "category": "Sopro", "notation_type": "notes"},
+    {"name": "Saxofone Tenor", "category": "Sopro", "notation_type": "notes"},
+    {"name": "Trompete", "category": "Sopro", "notation_type": "notes"},
+    {"name": "Trombone", "category": "Sopro", "notation_type": "notes"},
+    {"name": "Flauta Transversal", "category": "Sopro", "notation_type": "notes"},
+    {"name": "Clarinete", "category": "Sopro", "notation_type": "notes"},
+    {"name": "Gaita de Foles", "category": "Sopro", "notation_type": "notes"},
+    {"name": "Harmônica", "category": "Sopro", "notation_type": "notes"},
+    
+    # Vocal
+    {"name": "Vocal Principal", "category": "Vocal", "notation_type": "lyrics"},
+    {"name": "Backing Vocal", "category": "Vocal", "notation_type": "lyrics"},
+    {"name": "Coral", "category": "Vocal", "notation_type": "lyrics"},
+    
+    # Eletrônicos
+    {"name": "DJ/Controlador", "category": "Eletrônicos", "notation_type": "chords"},
+    {"name": "Sampler", "category": "Eletrônicos", "notation_type": "rhythm"},
+    {"name": "Drum Machine", "category": "Eletrônicos", "notation_type": "rhythm"},
+    
+    # Outros
+    {"name": "Regente", "category": "Outros", "notation_type": "chords"},
+    {"name": "Técnico de Som", "category": "Outros", "notation_type": "chords"}
 ]
 
 # Utility Functions
