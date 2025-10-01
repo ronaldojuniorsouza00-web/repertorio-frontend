@@ -288,89 +288,36 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
     return User(**user)
 
 async def search_song_data(title: str, artist: str) -> Dict[str, Any]:
-    """Search for song data using AI to generate plausible chords and lyrics"""
+    """Search for song data using real APIs (Spotify + Genius) + AI fallback"""
     try:
-        chat = LlmChat(
-            api_key=EMERGENT_LLM_KEY,
-            session_id=f"song_search_{uuid.uuid4()}",
-            system_message="Você é um especialista em música que fornece informações detalhadas sobre músicas, incluindo letras com cifras coordenadas por tempo."
-        ).with_model("openai", "gpt-5")
+        # Use the comprehensive music service
+        result = await music_service.search_song_comprehensive(title, artist)
         
-        message = UserMessage(
-            text=f"""Forneça informações completas sobre a música "{title}" de "{artist}":
-            
-            IMPORTANTE: Crie uma transcrição profissional com cifras posicionadas exatamente onde devem ser tocadas.
-            
-            FORMATO OBRIGATÓRIO DA LETRA COM CIFRAS:
-            [Intro]
-            C - G - Am - F
-            
-            [Verso 1]
-                 C              G              Am             F
-            Imagine all the people living for today
-                 C              G              Am             F  
-            Imagine there's no heaven, it's easy if you try
-            
-            [Refrão]
-                 F              C              G              Am
-            You may say I'm a dreamer, but I'm not the only one
-                 F              C              G              C
-            I hope someday you'll join us, and the world will be as one
-            
-            [Ponte]
-                 Am            Dm             G              C
-            You may wonder why we're here, what's the meaning of it all
-            
-            REQUISITOS:
-            1. Letra COMPLETA com todas as partes (versos, refrão, ponte, final)
-            2. Cifras EXATAS posicionadas sobre as sílabas corretas
-            3. Estrutura clara com seções identificadas
-            4. Sequência de acordes principais
-            5. Tom correto da música
-            6. Gênero específico (incluir samba, pagode, roda de samba, bossa nova, forró quando aplicável)
-            7. BPM preciso
-            
-            Responda APENAS em formato JSON válido:
-            {
-                "lyrics_with_chords": "letra completa formatada",
-                "chords": "sequência de acordes principais",
-                "key": "tom da música",
-                "genre": "gênero específico",
-                "tempo": número_bpm,
-                "structure": "estrutura da música"
-            }"""
-        )
-        
-        response = await chat.send_message(message)
-        
-        # Parse JSON response
-        try:
-            data = json.loads(response)
-            return {
-                "lyrics": data.get("lyrics_with_chords", data.get("lyrics", "Letra não disponível")),
-                "chords": data.get("chords", "Acordes não disponíveis"),
-                "key": data.get("key", "C"),
-                "genre": data.get("genre", "Popular"),
-                "tempo": data.get("tempo", 120),
-                "structure": data.get("structure", "Verso - Refrão - Verso - Refrão")
-            }
-        except:
-            # Fallback if JSON parsing fails
-            return {
-                "lyrics": f"[Verso]\n     C              G              Am             F\nLetra da música '{title}' de '{artist}'\n     C              G              F              G\nConsulte fontes oficiais para letra completa",
-                "chords": "C - G - Am - F",
-                "key": "C",
-                "genre": "Popular",
-                "tempo": 120,
-                "structure": "Verso - Refrão"
-            }
-    except Exception as e:
-        logging.error(f"Error searching song data: {e}")
         return {
-            "lyrics": "Erro ao buscar letra",
+            "lyrics": result.get("lyrics", "Letra não disponível"),
+            "chords": result.get("chords", "C - G - Am - F"),
+            "key": result.get("key", "C"),
+            "genre": result.get("genre", "Popular"),
+            "tempo": result.get("tempo", 120),
+            "structure": result.get("structure", "Verso - Refrão"),
+            # Additional metadata from real APIs
+            "album": result.get("album"),
+            "release_date": result.get("release_date"),
+            "popularity": result.get("popularity", 0),
+            "preview_url": result.get("preview_url"),
+            "duration_ms": result.get("duration_ms"),
+            "spotify_data": result.get("spotify_data"),
+            "genius_url": result.get("genius_url")
+        }
+        
+    except Exception as e:
+        logging.error(f"Error in comprehensive song search: {e}")
+        # Final fallback
+        return {
+            "lyrics": f"[Verso 1]\n     C              G              Am             F\nLetra da música '{title}' de '{artist}'\n     C              G              F              G\nConsulte fontes oficiais para letra completa",
             "chords": "C - G - Am - F",
             "key": "C",
-            "genre": "Unknown",
+            "genre": "Popular",
             "tempo": 120,
             "structure": "Verso - Refrão"
         }
