@@ -31,6 +31,8 @@ import { api, useAuth } from '../App';
 import socketService from '../services/socket';
 import IntelligentSearch from '../components/IntelligentSearch';
 import AudioRecognition from '../components/AudioRecognition';
+import RecommendationsDialog from '../components/RecommendationsDialog';
+import NextSongBar from '../components/NextSongBar';
 
 const Room = () => {
   const { roomId } = useParams();
