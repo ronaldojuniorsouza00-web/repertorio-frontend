@@ -171,20 +171,20 @@ class MusicMaestroAPITester:
             return True
         return False
 
-    def test_get_instrument_notation(self):
-        """Test getting instrument-specific notation"""
+    def test_instrument_notation_removed(self):
+        """Test that instrument notation endpoint returns 404 (removed)"""
         if not self.song_id:
             return False
             
         success, response = self.run_test(
-            "Get Instrument Notation",
+            "Instrument Notation Endpoint Removed",
             "GET",
             f"songs/{self.song_id}/notation/Violão",
-            200
+            404
         )
         
-        if success and 'notation' in response:
-            print(f"   Got notation for {response['instrument']}")
+        if success:
+            print(f"   ✅ Instrument notation endpoint correctly returns 404 (removed)")
             return True
         return False
 
