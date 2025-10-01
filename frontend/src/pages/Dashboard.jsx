@@ -67,21 +67,35 @@ const Dashboard = () => {
 
   const handleJoinRoom = async (e) => {
     e.preventDefault();
-    if (!joinRoomForm.room_code.trim() || !joinRoomForm.instrument) {
-      toast.error('Por favor, preencha todos os campos');
+    if (!joinRoomForm.room_code.trim()) {
+      toast.error('Por favor, digite o código da sala');
       return;
     }
     
+    // Show instrument selector
+    setPendingRoomCode(joinRoomForm.room_code);
+    setShowInstrumentSelector(true);
+  };
+  
+  const handleInstrumentSelected = async (instrument) => {
+    setShowInstrumentSelector(false);
+    
+    const joinData = {
+      room_code: pendingRoomCode,
+      instrument: instrument.name
+    };
+    
     setLoading(true);
     try {
-      const response = await api.joinRoom(joinRoomForm, token);
-      toast.success('Entrou na sala com sucesso!');
+      const response = await api.joinRoom(joinData, token);
+      toast.success(`Entrou na sala como ${instrument.name}!`);
       navigate(`/room/${response.room.id}`);
     } catch (error) {
       console.error('Error joining room:', error);
       toast.error('Erro ao entrar na sala. Verifique o código.');
     } finally {
       setLoading(false);
+      setPendingRoomCode('');
     }
   };
 
