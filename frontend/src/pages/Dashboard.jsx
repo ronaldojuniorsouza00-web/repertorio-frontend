@@ -55,30 +55,22 @@ const Dashboard = () => {
       return;
     }
     
-    // Show instrument selector
-    setPendingRoomCode(joinRoomForm.room_code);
-    setShowInstrumentSelector(true);
-  };
-  
-  const handleInstrumentSelected = async (instrument) => {
-    setShowInstrumentSelector(false);
-    
     const joinData = {
-      room_code: pendingRoomCode,
-      instrument: instrument.name
+      room_code: joinRoomForm.room_code
     };
     
     setLoading(true);
     try {
       const response = await api.joinRoom(joinData, token);
-      toast.success(`Entrou na sala como ${instrument.name}!`);
+      toast.success('Entrou na sala com sucesso!');
       navigate(`/room/${response.room.id}`);
     } catch (error) {
       console.error('Error joining room:', error);
       toast.error('Erro ao entrar na sala. Verifique o código.');
     } finally {
       setLoading(false);
-      setPendingRoomCode('');
+      setJoinRoomForm({ room_code: '' });
+      setShowJoinRoom(false);
     }
   };
 
