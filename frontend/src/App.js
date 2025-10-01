@@ -122,11 +122,7 @@ export const api = {
     return response.data;
   },
   
-  // Instruments
-  getInstruments: async () => {
-    const response = await axios.get(`${API}/instruments`);
-    return response.data;
-  },
+  // Instruments endpoint removed - no longer needed for collaborative system
   
   // Recommendations
   getRecommendations: async (roomId, token) => {
