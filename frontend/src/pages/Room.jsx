@@ -734,6 +734,103 @@ const Room = () => {
                       </form>
                     </DialogContent>
                   </Dialog>
+                  
+                  <Dialog open={showSettings} onOpenChange={setShowSettings}>
+                    <DialogTrigger asChild>
+                      <Button 
+                        variant="outline"
+                        className="border-gray-200 hover:bg-gray-50"
+                        data-testid="room-settings-button"
+                      >
+                        <Settings className="w-4 h-4 mr-2" />
+                        Configurações
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>Configurações da Sala</DialogTitle>
+                      </DialogHeader>
+                      
+                      <div className="space-y-6">
+                        {/* BPM Control */}
+                        <div className="space-y-3">
+                          <div className="flex items-center justify-between">
+                            <Label className="flex items-center">
+                              <Zap className="w-4 h-4 mr-2" />
+                              Velocidade (BPM)
+                            </Label>
+                            <span className="text-sm font-mono bg-gray-100 px-2 py-1 rounded">
+                              {currentTempo}
+                            </span>
+                          </div>
+                          <Slider
+                            value={[currentTempo]}
+                            onValueChange={handleTempoChange}
+                            max={200}
+                            min={60}
+                            step={1}
+                            className="w-full"
+                            disabled={!isAdmin}
+                          />
+                          <div className="flex justify-between text-xs text-gray-500">
+                            <span>60 (Lento)</span>
+                            <span>200 (Rápido)</span>
+                          </div>
+                          {!isAdmin && (
+                            <p className="text-xs text-amber-600">Apenas o admin pode alterar o BPM</p>
+                          )}
+                        </div>
+                        
+                        {/* Font Size Control */}
+                        <div className="space-y-3">
+                          <div className="flex items-center justify-between">
+                            <Label className="flex items-center">
+                              <Type className="w-4 h-4 mr-2" />
+                              Tamanho da Fonte
+                            </Label>
+                            <span className="text-sm font-mono bg-gray-100 px-2 py-1 rounded">
+                              {fontSize}px
+                            </span>
+                          </div>
+                          <Slider
+                            value={[fontSize]}
+                            onValueChange={handleFontSizeChange}
+                            max={24}
+                            min={12}
+                            step={1}
+                            className="w-full"
+                          />
+                          <div className="flex justify-between text-xs text-gray-500">
+                            <span>12px (Pequeno)</span>
+                            <span>24px (Grande)</span>
+                          </div>
+                        </div>
+                        
+                        {/* Quick Transpose */}
+                        {isAdmin && roomData?.current_song && (
+                          <div className="space-y-3">
+                            <Label className="flex items-center">
+                              <RotateCcw className="w-4 h-4 mr-2" />
+                              Transposição Rápida
+                            </Label>
+                            <div className="grid grid-cols-6 gap-2">
+                              {musicalKeys.map(key => (
+                                <Button
+                                  key={key}
+                                  variant={roomData.current_song.key === key ? "default" : "outline"}
+                                  size="sm"
+                                  onClick={() => handleKeyChange(key)}
+                                  className="text-xs"
+                                >
+                                  {key}
+                                </Button>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </DialogContent>
+                  </Dialog>
                 </>
               )}
             </div>
