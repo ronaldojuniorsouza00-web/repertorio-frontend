@@ -127,11 +127,7 @@ const Room = () => {
     };
   }, [roomId, user]);
 
-  useEffect(() => {
-    if (roomData?.current_song && currentUserInstrument) {
-      loadInstrumentNotation();
-    }
-  }, [roomData?.current_song, currentUserInstrument]);
+  // Instrument notation loading removed - no longer needed for collaborative system
 
   useEffect(() => {
     loadRoomSettings();
