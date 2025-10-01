@@ -409,6 +409,50 @@ const Room = () => {
     setShowTranspose(false);
   };
 
+  const loadPlaylist = async () => {
+    try {
+      const data = await api.getPlaylist(roomId, token);
+      setPlaylist(data.playlist);
+    } catch (error) {
+      console.error('Error loading playlist:', error);
+    }
+  };
+
+  const handleAddToPlaylist = async (song) => {
+    try {
+      await api.addSongToPlaylist(roomId, song.id, token);
+      toast.success(`${song.title} adicionada à playlist!`);
+      await loadPlaylist();
+      await loadRoomData();
+    } catch (error) {
+      console.error('Error adding to playlist:', error);
+      toast.error('Erro ao adicionar à playlist');
+    }
+  };
+
+  const handleRemoveFromPlaylist = async (songId) => {
+    try {
+      await api.removeSongFromPlaylist(roomId, songId, token);
+      toast.success('Música removida da playlist!');
+      await loadPlaylist();
+      await loadRoomData();
+    } catch (error) {
+      console.error('Error removing from playlist:', error);
+      toast.error('Erro ao remover da playlist');
+    }
+  };
+
+  const handleNextSong = async () => {
+    try {
+      await api.nextSongInPlaylist(roomId, token);
+      toast.success('Próxima música!');
+      await loadRoomData();
+    } catch (error) {
+      console.error('Error advancing to next song:', error);
+      toast.error('Erro ao avançar para próxima música');
+    }
+  };
+
   const copyRoomCode = () => {
     navigator.clipboard.writeText(roomData.room.code);
     toast.success('Código copiado para área de transferência!');
