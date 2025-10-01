@@ -170,6 +170,32 @@ export const api = {
       headers: { Authorization: `Bearer ${token}` }
     });
     return response.data;
+  },
+  
+  // Playlist Management
+  addSongToPlaylist: async (roomId, songId, token) => {
+    const response = await axios.post(`${API}/rooms/${roomId}/playlist/add/${songId}`, {}, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    return response.data;
+  },
+  getPlaylist: async (roomId, token) => {
+    const response = await axios.get(`${API}/rooms/${roomId}/playlist`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    return response.data;
+  },
+  removeSongFromPlaylist: async (roomId, songId, token) => {
+    const response = await axios.delete(`${API}/rooms/${roomId}/playlist/${songId}`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    return response.data;
+  },
+  nextSongInPlaylist: async (roomId, token) => {
+    const response = await axios.post(`${API}/rooms/${roomId}/playlist/next`, {}, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    return response.data;
   }
 };
 
