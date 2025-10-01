@@ -1094,19 +1094,45 @@ const Room = () => {
                           {roomData.current_song.lyrics}
                         </pre>
                         
-                        {/* BPM Indicator */}
-                        <div className="mt-4 flex items-center justify-between">
-                          <Badge 
-                            variant="outline" 
-                            className="bg-blue-50 border-blue-200 text-blue-700"
-                          >
-                            <Zap className="w-3 h-3 mr-1" />
-                            {currentTempo} BPM
-                          </Badge>
+                        {/* BPM Indicator and Spotify Preview */}
+                        <div className="mt-4 space-y-3">
+                          <div className="flex items-center justify-between">
+                            <Badge 
+                              variant="outline" 
+                              className="bg-blue-50 border-blue-200 text-blue-700"
+                            >
+                              <Zap className="w-3 h-3 mr-1" />
+                              {currentTempo} BPM
+                            </Badge>
+                            
+                            {presentationMode && (
+                              <div className="text-xs text-gray-500 bg-purple-50 px-2 py-1 rounded">
+                                🎤 Modo Apresentação
+                              </div>
+                            )}
+                          </div>
                           
-                          {presentationMode && (
-                            <div className="text-xs text-gray-500 bg-purple-50 px-2 py-1 rounded">
-                              🎤 Modo Apresentação
+                          {/* Spotify Preview Player */}
+                          {roomData.current_song.preview_url && (
+                            <div className="bg-green-50 border border-green-200 rounded-lg p-3">
+                              <div className="flex items-center justify-between">
+                                <div className="flex items-center space-x-2">
+                                  <div className="w-6 h-6 bg-green-600 rounded-full flex items-center justify-center">
+                                    <span className="text-white text-xs font-bold">♪</span>
+                                  </div>
+                                  <span className="text-green-800 font-medium text-sm">
+                                    Preview do Spotify
+                                  </span>
+                                </div>
+                              </div>
+                              <audio 
+                                controls 
+                                className="w-full mt-2"
+                                style={{ height: '32px' }}
+                              >
+                                <source src={roomData.current_song.preview_url} type="audio/mpeg" />
+                                Seu navegador não suporta o elemento de áudio.
+                              </audio>
                             </div>
                           )}
                         </div>
