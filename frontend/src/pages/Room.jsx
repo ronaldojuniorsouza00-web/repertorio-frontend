@@ -138,12 +138,6 @@ const Room = () => {
     try {
       const data = await api.getRoom(roomId, token);
       setRoomData(data);
-      
-      // Find current user's instrument
-      const userMember = data.members.find(m => m.user_id === user.id);
-      if (userMember) {
-        setCurrentUserInstrument(userMember.instrument);
-      }
     } catch (error) {
       console.error('Error loading room:', error);
       toast.error('Erro ao carregar dados da sala');
