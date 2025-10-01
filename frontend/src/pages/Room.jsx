@@ -1138,7 +1138,7 @@ const Room = () => {
                             <Badge variant="outline" className="ml-2 text-xs">Admin</Badge>
                           )}
                         </p>
-                        <p className="text-sm text-gray-600">{member.instrument}</p>
+                        <p className="text-sm text-gray-600">Participante</p>
                       </div>
                     </div>
                   ))}
