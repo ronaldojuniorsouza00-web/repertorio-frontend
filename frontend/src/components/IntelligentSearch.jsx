@@ -24,18 +24,34 @@ const IntelligentSearch = ({ onSongSelect, isOpen, onClose }) => {
     }
 
     setSearching(true);
+    setSearchResults([]); // Clear previous results
+    
     try {
+      // Show optimistic loading
+      const startTime = Date.now();
+      
       const response = await api.intelligentSearch(query, token);
+      
+      // Ensure minimum loading time for better UX (but max 3 seconds)
+      const elapsed = Date.now() - startTime;
+      if (elapsed < 1000) {
+        await new Promise(resolve => setTimeout(resolve, 1000 - elapsed));
+      }
+      
       setSearchResults(response.results);
       
       if (response.results.length === 0) {
         toast.info('Nenhuma música encontrada. Tente termos diferentes.');
       } else {
-        toast.success(`${response.results.length} músicas encontradas!`);
+        toast.success(`${response.results.length} músicas encontradas rapidamente!`);
       }
     } catch (error) {
       console.error('Error in intelligent search:', error);
-      toast.error('Erro na busca inteligente');
+      if (error.response?.status === 408) {
+        toast.error('Busca demorou demais. Tente termos mais específicos.');
+      } else {
+        toast.error('Erro na busca inteligente');
+      }
     } finally {
       setSearching(false);
     }
