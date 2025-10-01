@@ -8,6 +8,8 @@ import logging
 from spotipy.oauth2 import SpotifyClientCredentials
 from typing import Dict, List, Optional, Any
 from emergentintegrations.llm.chat import LlmChat, UserMessage
+import concurrent.futures
+import threading
 
 class MusicAPIService:
     def __init__(self):
