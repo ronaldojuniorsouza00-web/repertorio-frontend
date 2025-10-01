@@ -154,21 +154,7 @@ const Room = () => {
     toast.success('Dados atualizados!');
   };
 
-  const loadInstrumentNotation = async () => {
-    if (!roomData?.current_song || !currentUserInstrument) return;
-    
-    try {
-      const notation = await api.getInstrumentNotation(
-        roomData.current_song.id, 
-        currentUserInstrument, 
-        token
-      );
-      setInstrumentNotation(notation.notation);
-    } catch (error) {
-      console.error('Error loading notation:', error);
-      setInstrumentNotation('Notação não disponível no momento');
-    }
-  };
+  // loadInstrumentNotation function removed - no longer needed for collaborative system
 
   const handleAddSong = async (e) => {
     e.preventDefault();
