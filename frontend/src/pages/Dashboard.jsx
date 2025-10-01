@@ -227,15 +227,9 @@ const Dashboard = () => {
                       />
                     </div>
                     
-                    <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
-                      <div className="flex items-center space-x-2 mb-2">
-                        <Music className="w-5 h-5 text-amber-600" />
-                        <span className="font-medium text-amber-800">Seleção de Instrumento</span>
-                      </div>
-                      <p className="text-sm text-amber-700">
-                        Após inserir o código, você será direcionado para escolher seu instrumento e receberá notações específicas para ele.
-                      </p>
-                    </div>
+                    <p className="text-gray-600 text-center">
+                      Digite o código da sala para entrar e começar a tocar
+                    </p>
                     
                     <Button 
                       type="submit" 
