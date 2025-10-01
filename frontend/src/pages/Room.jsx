@@ -1013,7 +1013,7 @@ const Room = () => {
                 </CardHeader>
                 <CardContent>
                   <Tabs defaultValue="lyrics" className="w-full">
-                    <TabsList className="grid w-full grid-cols-3 mb-4 bg-amber-50">
+                    <TabsList className="grid w-full grid-cols-2 mb-4 bg-amber-50">
                       <TabsTrigger 
                         value="lyrics"
                         className="data-[state=active]:bg-amber-600 data-[state=active]:text-white"
@@ -1024,13 +1024,7 @@ const Room = () => {
                         value="chords"
                         className="data-[state=active]:bg-amber-600 data-[state=active]:text-white"
                       >
-                        Acordes Gerais
-                      </TabsTrigger>
-                      <TabsTrigger 
-                        value="instrument"
-                        className="data-[state=active]:bg-amber-600 data-[state=active]:text-white"
-                      >
-                        Meu {currentUserInstrument}
+                        Acordes
                       </TabsTrigger>
                     </TabsList>
                     
