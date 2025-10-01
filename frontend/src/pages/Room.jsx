@@ -241,6 +241,29 @@ const Room = () => {
     }
   };
 
+  const handleAddRecommendationsToPlaylist = async (selectedSongs) => {
+    setLoading(true);
+    try {
+      for (const songText of selectedSongs) {
+        // Parse "Title - Artist" format
+        const [title, artist] = songText.split(' - ').map(s => s.trim());
+        if (title && artist) {
+          const song = await api.searchSong({ title, artist }, token);
+          await handleAddToPlaylist(song);
+        }
+      }
+      
+      toast.success(`${selectedSongs.length} músicas adicionadas ao repertório!`);
+      setShowRecommendations(false);
+      await loadPlaylist();
+    } catch (error) {
+      console.error('Error adding recommendations:', error);
+      toast.error('Erro ao adicionar recomendações');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleTranspose = async (e) => {
     e.preventDefault();
     if (!transposeForm.from_key || !transposeForm.to_key) {
