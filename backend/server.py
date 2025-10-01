@@ -490,6 +490,33 @@ async def get_instrument_notation(
         "key": song_obj.key
     }
 
+@api_router.post("/songs/{song_id}/transpose")
+async def transpose_song(
+    song_id: str,
+    transpose_data: TransposeRequest,
+    current_user: User = Depends(get_current_user)
+):
+    song = await db.songs.find_one({"id": song_id})
+    if not song:
+        raise HTTPException(status_code=404, detail="Song not found")
+    
+    song_obj = Song(**song)
+    
+    # Transpose chords
+    new_chords = transpose_chords_string(song_obj.chords or "", transpose_data.from_key, transpose_data.to_key)
+    
+    # Update song with new key and transposed chords
+    await db.songs.update_one(
+        {"id": song_id},
+        {"$set": {"key": transpose_data.to_key, "chords": new_chords}}
+    )
+    
+    return {
+        "message": "Song transposed successfully",
+        "new_key": transpose_data.to_key,
+        "new_chords": new_chords
+    }
+
 # Room Routes
 @api_router.post("/rooms/create", response_model=Room)
 async def create_room(room_data: RoomCreate, current_user: User = Depends(get_current_user)):
