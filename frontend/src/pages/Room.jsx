@@ -58,6 +58,13 @@ const Room = () => {
     from_key: '',
     to_key: ''
   });
+  
+  const [aiRepertoireForm, setAiRepertoireForm] = useState({
+    style: '',
+    duration_minutes: 60,
+    energy_level: 'media',
+    audience_type: 'adultos'
+  });
 
   // Available keys for transposition
   const musicalKeys = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
