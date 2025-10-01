@@ -137,6 +137,7 @@ const Room = () => {
 
   useEffect(() => {
     loadRoomSettings();
+    loadPlaylist();
   }, [roomId]);
 
   const loadRoomData = async () => {
