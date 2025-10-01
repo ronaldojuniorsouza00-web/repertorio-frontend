@@ -1,0 +1,100 @@
+<analysis>
+The trajectory details the iterative development of a real-time, collaborative music application named Music Maestro. The process began with a user request for a platform where musicians could manage song repertoires with lyrics and chords. The AI engineer started by clarifying requirements, such as the data source for music (free-tier), AI model choice (OpenAI GPT-5), and authentication method (email/password).
+
+The development followed an incremental approach. The initial setup involved a FastAPI backend and React frontend. The engineer first built the core features: user authentication, creating/joining collaborative rooms, and adding songs. WebSockets were integrated early on for real-time synchronization of the repertoire.
+
+The user provided frequent feedback, leading to multiple feature enhancements. These included instrument-specific notations, audio recording, a show mode, and dynamic controls for tempo and key transposition. A major enhancement was the integration of third-party APIs (Spotify, AudD, Genius) using user-provided credentials, which replaced the initial AI-generated song data with real, licensed information. This significantly improved data quality, adding song previews and audio recognition.
+
+Further iterations focused on user experience, such as adding an intelligent search, AI-generated playlist recommendations with user confirmation, and a persistent Next Song bar for live performance usability. The final user request addressed performance issues, specifically slowness during AI-powered searches. The engineer began implementing a caching layer with Redis and asynchronous processing to optimize these operations, which is the current state of the work.
+</analysis>
+
+<product_requirements>
+The Music Maestro application is a real-time, collaborative platform designed for musicians during rehearsals and live performances.
+
+**Core Functionality:**
+*   **User Authentication:** Users can create accounts using email and password.
+*   **Collaborative Rooms:** Users can create or join virtual rooms where all members see the same song repertoire synchronized in real-time.
+*   **Song Management:** Users can add songs to the room's repertoire. The application fetches or generates the song's lyrics, chords, and key.
+*   **Real-Time Display:** The current song's lyrics and chords are displayed to all room members simultaneously. A persistent bar at the bottom of the screen always shows the next song in the queue.
+
+**Advanced Features:**
+*   **AI Integration (GPT-5):**
+    *   Recommends relevant songs based on the current repertoire or user-specified genres (e.g., Samba, Pagode).
+    *   Acts as a fallback to generate song structures (lyrics, chords) when official data is unavailable from APIs.
+*   **Third-Party API Integrations:**
+    *   **Spotify:** Provides rich metadata for songs, including title, artist, album art, and audio previews.
+    *   **Genius:** Fetches official, licensed song lyrics.
+    *   **AudD:** Enables audio recognition to identify a song being played nearby.
+*   **Live Performance Tools:**
+    *   Simultaneous key and tempo adjustment for all users in the room.
+    *   Audio recording of practice sessions.
+*   **User Experience:**
+    *   Intelligent search to find songs by name, artist, or descriptive queries.
+    *   User-configurable font size for lyrics.
+</product_requirements>
+
+<key_technical_concepts>
+- **Backend:** FastAPI, Python, Pydantic for data validation.
+- **Frontend:** React, JavaScript,  for API calls, TailwindCSS for styling.
+- **Database:** MongoDB (via  async driver).
+- **Real-time Communication:** WebSockets ( on the backend,  on the frontend).
+- **Third-Party APIs:** Integration with Spotify (Spotipy), Genius (lyricsgenius), and AudD for enhanced music data.
+- **AI:** OpenAI GPT-5 for song recommendations and structure generation.
+- **Performance Optimization:** Redis for caching API responses and computationally expensive results.
+</key_technical_concepts>
+
+<code_architecture>
+The application follows a standard full-stack architecture with a React frontend communicating with a FastAPI backend via REST APIs and WebSockets.
+
+**Directory Structure:**
+
+
+**Key Files:**
+
+-   ****
+    -   **Importance:** The main entry point for the FastAPI application. It defines all API routes, WebSocket event handlers, and integrates the database and other services.
+    -   **Changes:** Evolved significantly from a basic server to a complex application. It now includes user authentication (JWT), room management, song addition/transposition logic, and routes for AI recommendations and audio recognition. It mounts the  application for real-time features. The latest changes involve integrating the  to optimize database and API calls.
+
+-   ****
+    -   **Importance:** Centralizes all logic for interacting with third-party music APIs (Spotify, Genius, AudD) and the GPT-5 AI model. It abstracts the data fetching and processing away from the main server routes.
+    -   **Changes:** Created to house the integration logic. Recently updated to incorporate the new Redis caching layer () to avoid redundant API calls and speed up responses for frequently requested songs and AI-generated content. Asynchronous processing was also added.
+
+-   ****
+    -   **Importance:** A new service created to handle caching. It provides a simple interface for setting and getting data from a Redis instance.
+    -   **Changes:** This is a newly created file, central to the ongoing performance optimization task.
+
+-   ****
+    -   **Importance:** The root component of the React application. It handles routing and global state or context.
+    -   **Changes:** Modified to set up routing for , , and . It also initializes the Socket.IO connection and includes the PWA installation prompt component.
+
+-   ****
+    -   **Importance:** The most critical UI component where all real-time collaboration happens. It displays the current song, manages the playlist, and houses controls for search, recommendations, transposition, and recording.
+    -   **Changes:** This file has been heavily modified throughout the project. It now manages complex state for the room, current song, playlist, and user interactions. It listens for and emits WebSocket events to stay in sync with the backend and other clients. Recent changes involve adding new components like , , and .
+
+-   ****
+    -   **Importance:** A dedicated component for the AI-powered song search feature.
+    -   **Changes:** Created to encapsulate the search input, modal display logic, and API call for intelligent search. The latest changes integrated the  component to provide better user feedback during slow AI searches.
+</code_architecture>
+
+<pending_tasks>
+- Complete and thoroughly test the performance optimizations for AI-driven features (repertoire generation and intelligent search).
+- Verify that the new caching mechanism and asynchronous processing have resolved the slowness reported by the user.
+</pending_tasks>
+
+<current_work>
+The immediate past work focused on addressing a user complaint about the application being slow, particularly when using AI-powered features like repertoire generation. The AI engineer initiated a significant performance optimization effort.
+
+**Backend Work:**
+1.  **Caching Layer:** A new file, , was created to interface with Redis, providing functions to get and set cached data.
+2.  **Service Integration:** The main  was updated to initialize and use this new cache service.
+3.  **Asynchronous Optimization:** The  file was heavily refactored. Caching logic was added to functions that call external APIs (Spotify, Genius) and the AI model, storing results in Redis to prevent redundant, time-consuming calls. Asynchronous processing was implemented to handle long-running tasks without blocking.
+
+**Frontend Work:**
+1.  **Loading Indicators:** A new component, , was created to provide more informative and visually appealing loading states for users during slow operations.
+2.  **UI Integration:** The  component and the  page were updated to use these new loading indicators, improving the user experience during searches and song additions.
+3.  **Final Step:** The very last action taken was beginning to optimize the  function in  to better handle the loading state.
+</current_work>
+
+<optional_next_step>
+Finalize the optimization of the  function in  and then restart the services to test the performance improvements across the entire application, specifically focusing on the AI search and recommendation features.
+</optional_next_step>
