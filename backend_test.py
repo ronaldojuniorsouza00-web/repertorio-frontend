@@ -298,6 +298,135 @@ class MusicMaestroAPITester:
             return True
         return False
 
+    def test_start_recording(self):
+        """Test starting a collaborative recording"""
+        if not self.room_id:
+            return False
+            
+        recording_data = {
+            "recording_name": f"Test Recording {int(time.time())}"
+        }
+        
+        success, response = self.run_test(
+            "Start Recording",
+            "POST",
+            f"rooms/{self.room_id}/start-recording",
+            200,
+            data=recording_data
+        )
+        
+        if success and 'recording_id' in response:
+            self.recording_id = response['recording_id']
+            print(f"   Started recording: {response['recording']['recording_name']}")
+            return True
+        return False
+
+    def test_stop_recording(self):
+        """Test stopping a recording with duration"""
+        if not self.room_id or not self.recording_id:
+            return False
+            
+        duration = 30  # 30 seconds test duration
+        
+        success, response = self.run_test(
+            "Stop Recording",
+            "POST",
+            f"rooms/{self.room_id}/stop-recording/{self.recording_id}?duration={duration}",
+            200
+        )
+        
+        if success and 'recording' in response:
+            print(f"   Stopped recording with duration: {duration}s")
+            return True
+        return False
+
+    def test_get_recordings(self):
+        """Test getting all recordings for a room"""
+        if not self.room_id:
+            return False
+            
+        success, response = self.run_test(
+            "Get Recordings",
+            "GET",
+            f"rooms/{self.room_id}/recordings",
+            200
+        )
+        
+        if success and 'recordings' in response:
+            print(f"   Found {len(response['recordings'])} recordings")
+            return True
+        return False
+
+    def test_play_recording(self):
+        """Test playing a recording"""
+        if not self.room_id or not self.recording_id:
+            return False
+            
+        success, response = self.run_test(
+            "Play Recording",
+            "POST",
+            f"rooms/{self.room_id}/recordings/{self.recording_id}/play",
+            200
+        )
+        
+        if success:
+            print(f"   Recording playback started")
+            return True
+        return False
+
+    def test_pause_recording(self):
+        """Test pausing a recording"""
+        if not self.room_id or not self.recording_id:
+            return False
+            
+        success, response = self.run_test(
+            "Pause Recording",
+            "POST",
+            f"rooms/{self.room_id}/recordings/{self.recording_id}/pause",
+            200
+        )
+        
+        if success:
+            print(f"   Recording playback paused")
+            return True
+        return False
+
+    def test_set_recording_volume(self):
+        """Test setting recording volume"""
+        if not self.room_id or not self.recording_id:
+            return False
+            
+        volume = 0.7  # 70% volume
+        
+        success, response = self.run_test(
+            "Set Recording Volume",
+            "POST",
+            f"rooms/{self.room_id}/recordings/{self.recording_id}/volume?volume={volume}",
+            200
+        )
+        
+        if success:
+            print(f"   Recording volume set to {volume}")
+            return True
+        return False
+
+    def test_delete_recording(self):
+        """Test deleting a recording"""
+        if not self.room_id or not self.recording_id:
+            return False
+            
+        success, response = self.run_test(
+            "Delete Recording",
+            "DELETE",
+            f"rooms/{self.room_id}/recordings/{self.recording_id}",
+            200
+        )
+        
+        if success:
+            print(f"   Recording deleted successfully")
+            return True
+        return False
+
 def main():
     print("🎵 Music Maestro API Testing Suite")
     print("=" * 50)
