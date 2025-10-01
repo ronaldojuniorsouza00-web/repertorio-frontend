@@ -786,6 +786,156 @@ async def get_recommendations(room_id: str, current_user: User = Depends(get_cur
         logging.error(f"Error generating recommendations: {e}")
         return {"recommendations": []}
 
+# AI Repertoire Generation
+@api_router.post("/rooms/{room_id}/generate-repertoire")
+async def generate_ai_repertoire(
+    room_id: str,
+    repertoire_request: AIRepertoireRequest,
+    current_user: User = Depends(get_current_user)
+):
+    room = await db.rooms.find_one({"id": room_id})
+    if not room:
+        raise HTTPException(status_code=404, detail="Room not found")
+    
+    if room["admin_id"] != current_user.id:
+        raise HTTPException(status_code=403, detail="Only admin can generate repertoire")
+    
+    try:
+        chat = LlmChat(
+            api_key=EMERGENT_LLM_KEY,
+            session_id=f"repertoire_{uuid.uuid4()}",
+            system_message="Você é um especialista em curadoria musical para shows ao vivo e eventos."
+        ).with_model("openai", "gpt-5")
+        
+        message = UserMessage(
+            text=f"""Crie um repertório completo para um evento de {repertoire_request.duration_minutes} minutos com as seguintes características:
+            
+            - Estilo musical: {repertoire_request.style}
+            - Nível de energia: {repertoire_request.energy_level}
+            - Público-alvo: {repertoire_request.audience_type}
+            - Duração total: {repertoire_request.duration_minutes} minutos
+            
+            Responda com uma lista de 12-20 músicas no formato:
+            "Título - Artista - Duração (em minutos)"
+            
+            Organize o repertório considerando:
+            1. Abertura impactante
+            2. Variação de ritmo e energia
+            3. Momentos de conexão com o público
+            4. Encerramento memorável
+            
+            Inclua apenas músicas conhecidas e adequadas ao público especificado."""
+        )
+        
+        response = await chat.send_message(message)
+        
+        # Parse repertoire
+        repertoire = []
+        lines = response.strip().split('\n')
+        for line in lines:
+            if ' - ' in line and len(line.split(' - ')) >= 2:
+                parts = line.strip().split(' - ')
+                if len(parts) >= 3:
+                    title = parts[0].strip()
+                    artist = parts[1].strip()
+                    duration = parts[2].strip()
+                    repertoire.append({
+                        "title": title,
+                        "artist": artist,
+                        "duration": duration,
+                        "original_line": line.strip()
+                    })
+        
+        return {
+            "repertoire": repertoire,
+            "style": repertoire_request.style,
+            "total_songs": len(repertoire),
+            "estimated_duration": repertoire_request.duration_minutes
+        }
+        
+    except Exception as e:
+        logging.error(f"Error generating repertoire: {e}")
+        raise HTTPException(status_code=500, detail="Error generating repertoire")
+
+# Recording functionality
+@api_router.post("/rooms/{room_id}/start-recording")
+async def start_recording(room_id: str, current_user: User = Depends(get_current_user)):
+    room = await db.rooms.find_one({"id": room_id})
+    if not room:
+        raise HTTPException(status_code=404, detail="Room not found")
+    
+    # Create recording entry
+    recording = Recording(
+        room_id=room_id,
+        filename=f"recording_{room_id}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.webm",
+        created_by=current_user.id
+    )
+    
+    await db.recordings.insert_one(recording.dict())
+    
+    # Emit to all room members
+    await sio.emit('recording_started', {
+        'recording_id': recording.id,
+        'started_by': current_user.name
+    }, room=room_id)
+    
+    return {"message": "Recording started", "recording_id": recording.id}
+
+@api_router.post("/rooms/{room_id}/stop-recording/{recording_id}")
+async def stop_recording(
+    room_id: str, 
+    recording_id: str,
+    duration: int,
+    current_user: User = Depends(get_current_user)
+):
+    # Update recording with duration
+    await db.recordings.update_one(
+        {"id": recording_id, "room_id": room_id},
+        {"$set": {"duration": duration}}
+    )
+    
+    # Emit to all room members
+    await sio.emit('recording_stopped', {
+        'recording_id': recording_id,
+        'duration': duration,
+        'stopped_by': current_user.name
+    }, room=room_id)
+    
+    return {"message": "Recording stopped"}
+
+@api_router.get("/rooms/{room_id}/recordings")
+async def get_recordings(room_id: str, current_user: User = Depends(get_current_user)):
+    recordings = await db.recordings.find({"room_id": room_id}).to_list(100)
+    return {"recordings": [Recording(**rec) for rec in recordings]}
+
+# Presentation Mode
+@api_router.post("/rooms/{room_id}/presentation-mode")
+async def toggle_presentation_mode(
+    room_id: str,
+    enabled: bool,
+    current_user: User = Depends(get_current_user)
+):
+    room = await db.rooms.find_one({"id": room_id})
+    if not room:
+        raise HTTPException(status_code=404, detail="Room not found")
+    
+    if room["admin_id"] != current_user.id:
+        raise HTTPException(status_code=403, detail="Only admin can toggle presentation mode")
+    
+    # Update room presentation mode
+    await db.rooms.update_one(
+        {"id": room_id},
+        {"$set": {"presentation_mode": enabled}}
+    )
+    
+    # Emit to all room members
+    await sio.emit('presentation_mode_changed', {
+        'enabled': enabled,
+        'changed_by': current_user.name
+    }, room=room_id)
+    
+    return {"message": f"Presentation mode {'enabled' if enabled else 'disabled'}"}
+
 # Basic Routes
 @api_router.get("/")
 async def root():
