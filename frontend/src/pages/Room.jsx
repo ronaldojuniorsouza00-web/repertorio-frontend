@@ -553,6 +553,16 @@ const Room = () => {
                   </Dialog>
                   
                   <Button 
+                    onClick={() => setShowIntelligentSearch(true)}
+                    variant="outline"
+                    className="border-purple-200 hover:bg-purple-50 text-purple-600"
+                    data-testid="intelligent-search-button"
+                  >
+                    <Sparkles className="w-4 h-4 mr-2" />
+                    Busca IA
+                  </Button>
+                  
+                  <Button 
                     onClick={loadRecommendations}
                     variant="outline"
                     className="border-amber-200 hover:bg-amber-50"
