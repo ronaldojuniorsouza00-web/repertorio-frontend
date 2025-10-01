@@ -12,7 +12,7 @@ import concurrent.futures
 import threading
 
 class MusicAPIService:
-    def __init__(self):
+    def __init__(self, cache_service=None):
         # Spotify
         self.spotify_client_id = os.getenv('SPOTIFY_CLIENT_ID')
         self.spotify_client_secret = os.getenv('SPOTIFY_CLIENT_SECRET')
@@ -25,6 +25,12 @@ class MusicAPIService:
         
         # Emergency LLM
         self.llm_key = os.getenv('EMERGENT_LLM_KEY')
+        
+        # Cache service
+        self.cache_service = cache_service
+        
+        # Thread pool for parallel processing
+        self.thread_pool = concurrent.futures.ThreadPoolExecutor(max_workers=3)
         
         # Initialize services
         self._init_spotify()
