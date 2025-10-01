@@ -114,6 +114,42 @@ export const api = {
       headers: { Authorization: `Bearer ${token}` }
     });
     return response.data;
+  },
+  
+  // AI Repertoire
+  generateAIRepertoire: async (roomId, repertoireData, token) => {
+    const response = await axios.post(`${API}/rooms/${roomId}/generate-repertoire`, repertoireData, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    return response.data;
+  },
+  
+  // Recording
+  startRecording: async (roomId, token) => {
+    const response = await axios.post(`${API}/rooms/${roomId}/start-recording`, {}, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    return response.data;
+  },
+  stopRecording: async (roomId, recordingId, duration, token) => {
+    const response = await axios.post(`${API}/rooms/${roomId}/stop-recording/${recordingId}?duration=${duration}`, {}, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    return response.data;
+  },
+  getRecordings: async (roomId, token) => {
+    const response = await axios.get(`${API}/rooms/${roomId}/recordings`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    return response.data;
+  },
+  
+  // Presentation Mode
+  togglePresentationMode: async (roomId, enabled, token) => {
+    const response = await axios.post(`${API}/rooms/${roomId}/presentation-mode?enabled=${enabled}`, {}, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    return response.data;
   }
 };
 
