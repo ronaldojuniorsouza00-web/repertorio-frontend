@@ -274,20 +274,31 @@ async def search_song_data(title: str, artist: str) -> Dict[str, Any]:
         chat = LlmChat(
             api_key=EMERGENT_LLM_KEY,
             session_id=f"song_search_{uuid.uuid4()}",
-            system_message="Você é um especialista em música que fornece acordes, letras e informações sobre músicas populares brasileiras e internacionais."
+            system_message="Você é um especialista em música que fornece informações detalhadas sobre músicas, incluindo letras com cifras coordenadas por tempo."
         ).with_model("openai", "gpt-5")
         
         message = UserMessage(
-            text=f"""Forneça informações sobre a música "{title}" do artista "{artist}":
+            text=f"""Forneça informações completas sobre a música "{title}" de "{artist}":
             
-            1. Letra completa (se conhecida)
-            2. Sequência de acordes principais
+            1. Letra completa com cifras integradas (coloque os acordes ACIMA das palavras onde devem ser tocados)
+            2. Sequência de acordes principais da música
             3. Tom da música
-            4. Gênero musical
-            5. Andamento aproximado (BPM)
+            4. Gênero musical específico
+            5. Andamento (BPM) preciso
+            6. Estrutura da música (verso, refrão, ponte, etc.)
             
-            Se não conhecer a música exatamente, forneça uma estrutura típica do gênero do artista.
-            Responda em formato JSON com as chaves: lyrics, chords, key, genre, tempo"""
+            FORMATO DA LETRA COM CIFRAS:
+            [Verso 1]
+                 C              G              Am             F
+            Imagine all the people living for today
+                 C              G              Am             F  
+            Imagine there's no heaven, it's easy if you try
+            
+            [Refrão]
+                 F              C              G              Am
+            You may say I'm a dreamer, but I'm not the only one
+            
+            Responda em formato JSON com as chaves: lyrics_with_chords, chords, key, genre, tempo, structure"""
         )
         
         response = await chat.send_message(message)
@@ -296,20 +307,22 @@ async def search_song_data(title: str, artist: str) -> Dict[str, Any]:
         try:
             data = json.loads(response)
             return {
-                "lyrics": data.get("lyrics", "Letra não disponível"),
+                "lyrics": data.get("lyrics_with_chords", data.get("lyrics", "Letra não disponível")),
                 "chords": data.get("chords", "Acordes não disponíveis"),
                 "key": data.get("key", "C"),
                 "genre": data.get("genre", "Popular"),
-                "tempo": data.get("tempo", 120)
+                "tempo": data.get("tempo", 120),
+                "structure": data.get("structure", "Verso - Refrão - Verso - Refrão")
             }
         except:
             # Fallback if JSON parsing fails
             return {
-                "lyrics": "Letra não disponível - consulte fontes oficiais",
-                "chords": "Acordes básicos: C - G - Am - F",
+                "lyrics": f"[Verso]\n     C              G              Am             F\nLetra da música '{title}' de '{artist}'\n     C              G              F              G\nConsulte fontes oficiais para letra completa",
+                "chords": "C - G - Am - F",
                 "key": "C",
                 "genre": "Popular",
-                "tempo": 120
+                "tempo": 120,
+                "structure": "Verso - Refrão"
             }
     except Exception as e:
         logging.error(f"Error searching song data: {e}")
@@ -318,8 +331,61 @@ async def search_song_data(title: str, artist: str) -> Dict[str, Any]:
             "chords": "C - G - Am - F",
             "key": "C",
             "genre": "Unknown",
-            "tempo": 120
+            "tempo": 120,
+            "structure": "Verso - Refrão"
         }
+
+async def intelligent_song_search(query: str) -> List[Dict[str, Any]]:
+    """AI-powered song search by name, artist, or description"""
+    try:
+        chat = LlmChat(
+            api_key=EMERGENT_LLM_KEY,
+            session_id=f"intelligent_search_{uuid.uuid4()}",
+            system_message="Você é um especialista musical que ajuda a encontrar músicas baseado em descrições, nomes parciais ou artistas."
+        ).with_model("openai", "gpt-5")
+        
+        message = UserMessage(
+            text=f"""Baseado na busca: "{query}"
+            
+            Encontre até 8 músicas que correspondem a essa busca. Pode ser por:
+            - Nome da música (exato ou parcial)
+            - Nome do artista
+            - Descrição do estilo ou letra
+            - Gênero musical
+            
+            Para cada música, forneça:
+            1. Título exato
+            2. Artista principal
+            3. Gênero
+            4. Década/Ano aproximado
+            5. Popularidade (1-10)
+            
+            Responda em formato JSON como uma lista:
+            [
+                {
+                    "title": "Nome da Música",
+                    "artist": "Nome do Artista",
+                    "genre": "Gênero",
+                    "year": "Ano",
+                    "popularity": 9
+                }
+            ]
+            
+            Priorize músicas conhecidas e populares."""
+        )
+        
+        response = await chat.send_message(message)
+        
+        try:
+            results = json.loads(response)
+            return results if isinstance(results, list) else []
+        except:
+            # Fallback parsing
+            return []
+            
+    except Exception as e:
+        logging.error(f"Error in intelligent search: {e}")
+        return []
 
 def transpose_chord(chord: str, semitones: int) -> str:
     """Transpose a single chord by semitones"""
