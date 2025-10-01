@@ -7,6 +7,7 @@ import { Label } from '../components/ui/label';
 import { Badge } from '../components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '../components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
 import { 
   Music, 
   Users, 
@@ -17,10 +18,12 @@ import {
   Copy, 
   Search,
   Lightbulb,
-  RefreshCw
+  RefreshCw,
+  RotateCcw
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { api, useAuth } from '../App';
+import socketService from '../services/socket';
 
 const Room = () => {
   const { roomId } = useParams();
