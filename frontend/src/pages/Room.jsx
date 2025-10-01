@@ -133,6 +133,10 @@ const Room = () => {
     }
   }, [roomData?.current_song, currentUserInstrument]);
 
+  useEffect(() => {
+    loadRoomSettings();
+  }, [roomId]);
+
   const loadRoomData = async () => {
     try {
       const data = await api.getRoom(roomId, token);
