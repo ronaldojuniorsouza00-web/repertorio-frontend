@@ -142,11 +142,19 @@ const IntelligentSearch = ({ onSongSelect, isOpen, onClose }) => {
             </Button>
           </form>
 
+          {/* Loading State */}
+          {searching && (
+            <SmartLoading 
+              type="intelligent_search" 
+              message="Buscando no Spotify e IA..."
+            />
+          )}
+
           {/* Search Results */}
-          {searchResults.length > 0 && (
+          {!searching && searchResults.length > 0 && (
             <div className="space-y-4">
               <h3 className="text-lg font-semibold text-gray-900">
-                Resultados Encontrados ({searchResults.length})
+                🎵 Resultados Encontrados ({searchResults.length})
               </h3>
               
               <div className="overflow-y-auto max-h-96 space-y-3">
