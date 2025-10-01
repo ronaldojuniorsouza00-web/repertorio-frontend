@@ -323,53 +323,12 @@ async def search_song_data(title: str, artist: str) -> Dict[str, Any]:
         }
 
 async def intelligent_song_search(query: str) -> List[Dict[str, Any]]:
-    """AI-powered song search by name, artist, or description"""
+    """Intelligent search using Spotify + AI fallback"""
     try:
-        chat = LlmChat(
-            api_key=EMERGENT_LLM_KEY,
-            session_id=f"intelligent_search_{uuid.uuid4()}",
-            system_message="Você é um especialista musical que ajuda a encontrar músicas baseado em descrições, nomes parciais ou artistas."
-        ).with_model("openai", "gpt-5")
+        # Use the music service for intelligent search
+        results = await music_service.intelligent_search(query)
+        return results
         
-        message = UserMessage(
-            text=f"""Baseado na busca: "{query}"
-            
-            Encontre até 8 músicas que correspondem a essa busca. Pode ser por:
-            - Nome da música (exato ou parcial)
-            - Nome do artista
-            - Descrição do estilo ou letra
-            - Gênero musical
-            
-            Para cada música, forneça:
-            1. Título exato
-            2. Artista principal
-            3. Gênero
-            4. Década/Ano aproximado
-            5. Popularidade (1-10)
-            
-            Responda em formato JSON como uma lista:
-            [
-                {
-                    "title": "Nome da Música",
-                    "artist": "Nome do Artista",
-                    "genre": "Gênero",
-                    "year": "Ano",
-                    "popularity": 9
-                }
-            ]
-            
-            Priorize músicas conhecidas e populares."""
-        )
-        
-        response = await chat.send_message(message)
-        
-        try:
-            results = json.loads(response)
-            return results if isinstance(results, list) else []
-        except:
-            # Fallback parsing
-            return []
-            
     except Exception as e:
         logging.error(f"Error in intelligent search: {e}")
         return []
