@@ -71,12 +71,7 @@ export const api = {
     });
     return response.data;
   },
-  getInstrumentNotation: async (songId, instrument, token) => {
-    const response = await axios.get(`${API}/songs/${songId}/notation/${instrument}`, {
-      headers: { Authorization: `Bearer ${token}` }
-    });
-    return response.data;
-  },
+  // getInstrumentNotation removed - no longer needed for collaborative system
   
   // Rooms
   createRoom: async (roomData, token) => {
