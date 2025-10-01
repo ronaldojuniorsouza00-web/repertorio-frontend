@@ -750,3 +750,6 @@ logger = logging.getLogger(__name__)
 @app.on_event("shutdown")
 async def shutdown_db_client():
     client.close()
+
+# Return the socket app instead of regular app
+app_final = socket_app
