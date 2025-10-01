@@ -437,6 +437,30 @@ async def transpose_changed(sid, data):
     if room_id and new_key:
         await sio.emit('transpose_changed', {'new_key': new_key}, room=room_id)
 
+@sio.event
+async def audio_stream(sid, data):
+    room_id = data.get('room_id')
+    audio_data = data.get('audio_data')
+    user_id = data.get('user_id')
+    if room_id and audio_data:
+        # Broadcast audio to other room members (excluding sender)
+        await sio.emit('audio_received', {
+            'audio_data': audio_data,
+            'user_id': user_id
+        }, room=room_id, skip_sid=sid)
+
+@sio.event
+async def recording_chunk(sid, data):
+    room_id = data.get('room_id')
+    recording_id = data.get('recording_id')
+    chunk_data = data.get('chunk_data')
+    # In production, save chunk to file system or cloud storage
+    # For now, just acknowledge receipt
+    await sio.emit('chunk_received', {
+        'recording_id': recording_id,
+        'status': 'received'
+    }, room=sid)
+
 # Authentication Routes
 @api_router.post("/auth/register", response_model=Token)
 async def register(user_data: UserCreate):
