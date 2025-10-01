@@ -197,6 +197,7 @@ function App() {
               element={<Navigate to={authContextValue.isAuthenticated ? "/dashboard" : "/auth"} />} 
             />
           </Routes>
+          <PWAInstall />
           <Toaster position="top-right" />
         </div>
       </BrowserRouter>
