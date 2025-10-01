@@ -166,6 +166,20 @@ class AIRepertoireRequest(BaseModel):
     energy_level: str  # "baixa", "media", "alta"
     audience_type: str  # "familia", "jovens", "adultos"
 
+class SongSearch(BaseModel):
+    query: str
+
+class SongControlSettings(BaseModel):
+    tempo: Optional[int] = None  # BPM adjustment
+    key: Optional[str] = None   # Key signature
+    font_size: Optional[int] = 16  # Font size for lyrics
+    
+class RoomSettings(BaseModel):
+    current_tempo: Optional[int] = 120
+    current_key: Optional[str] = "C"
+    font_size: Optional[int] = 16
+    presentation_mode: Optional[bool] = False
+
 # Predefined instruments - Lista completa
 INSTRUMENTS = [
     # Cordas
