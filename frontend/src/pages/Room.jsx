@@ -1092,6 +1092,16 @@ const Room = () => {
             </Dialog>
           </div>
         </div>
+        
+        {/* Intelligent Search Component */}
+        <IntelligentSearch
+          isOpen={showIntelligentSearch}
+          onClose={() => setShowIntelligentSearch(false)}
+          onSongSelect={async (song) => {
+            await loadRoomData();
+            toast.success('Música adicionada ao repertório!');
+          }}
+        />
       </div>
     </div>
   );
