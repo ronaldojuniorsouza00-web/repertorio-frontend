@@ -195,17 +195,25 @@ const Room = () => {
     
     setLoading(true);
     try {
+      // Show progress feedback
+      toast.info('🔍 Buscando música no Spotify e Genius...');
+      
       const song = await api.searchSong(songForm, token);
+      
+      // Show success and add to playlist
+      toast.success(`✅ "${song.title}" encontrada! Adicionando à playlist...`);
       
       // Automatically add to playlist
       await handleAddToPlaylist(song);
       
       setSongForm({ title: '', artist: '' });
       setShowAddSong(false);
-      toast.success(`Música "${song.title}" adicionada à playlist com transcrições!`);
+      
+      toast.success(`🎵 "${song.title}" adicionada com cifras coordenadas!`);
+      
     } catch (error) {
       console.error('Error adding song:', error);
-      toast.error('Erro ao adicionar música');
+      toast.error('❌ Erro ao buscar música. Verifique o título e artista.');
     } finally {
       setLoading(false);
     }
