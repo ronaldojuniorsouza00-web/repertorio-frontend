@@ -891,19 +891,26 @@ async def stop_recording(
     current_user: User = Depends(get_current_user)
 ):
     # Update recording with duration
-    await db.recordings.update_one(
-        {"id": recording_id, "room_id": room_id},
+    result = await db.recordings.update_one(
+        {"id": recording_id, "room_id": room_id, "user_id": current_user.id},
         {"$set": {"duration": duration}}
     )
+    
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Recording not found or not owned by user")
+    
+    # Get updated recording
+    recording = await db.recordings.find_one({"id": recording_id})
     
     # Emit to all room members
     await sio.emit('recording_stopped', {
         'recording_id': recording_id,
         'duration': duration,
-        'stopped_by': current_user.name
+        'user_name': current_user.name,
+        'recording': Recording(**recording).dict()
     }, room=room_id)
     
-    return {"message": "Recording stopped"}
+    return {"message": "Recording stopped", "recording": Recording(**recording).dict()}
 
 @api_router.get("/rooms/{room_id}/recordings")
 async def get_recordings(room_id: str, current_user: User = Depends(get_current_user)):
