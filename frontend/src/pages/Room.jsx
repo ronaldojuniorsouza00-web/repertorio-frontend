@@ -35,9 +35,11 @@ const Room = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [showAddSong, setShowAddSong] = useState(false);
   const [showRecommendations, setShowRecommendations] = useState(false);
+  const [showTranspose, setShowTranspose] = useState(false);
   const [currentUserInstrument, setCurrentUserInstrument] = useState('');
   const [instrumentNotation, setInstrumentNotation] = useState('');
   const [recommendations, setRecommendations] = useState([]);
+  const [realTimeUpdates, setRealTimeUpdates] = useState([]);
   
   const [songForm, setSongForm] = useState({
     title: '',
