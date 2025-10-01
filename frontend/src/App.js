@@ -137,6 +137,10 @@ function App() {
     setToken(authData.access_token);
     localStorage.setItem('user', JSON.stringify(authData.user));
     localStorage.setItem('token', authData.access_token);
+    
+    // Connect to socket
+    socketService.connect(authData.access_token);
+    
     toast.success('Login realizado com sucesso!');
   };
 
