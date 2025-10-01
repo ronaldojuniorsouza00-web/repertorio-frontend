@@ -3,6 +3,8 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import axios from 'axios';
 import { Toaster } from './components/ui/sonner';
 import { toast } from 'sonner';
+import socketService from './services/socket';
+import PWAInstall from './components/PWAInstall';
 import '@/App.css';
 
 // Pages
