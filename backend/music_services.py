@@ -222,6 +222,90 @@ class MusicAPIService:
         
         return None
 
+    async def _generate_ai_fallback_fast(self, title: str, artist: str, existing_data: Dict) -> Dict[str, Any]:
+        """Generate AI-powered content with optimizations for speed"""
+        # Check cache first for AI results
+        if self.cache_service:
+            cached_ai = await self.cache_service.get_cached_result(
+                "ai_fallback",
+                {"title": title.lower(), "artist": artist.lower()},
+                max_age_hours=72  # 3 days for AI results
+            )
+            if cached_ai:
+                return cached_ai
+        
+        try:
+            chat = LlmChat(
+                api_key=self.llm_key,
+                session_id=f"fast_music_{hashlib.md5(f'{title}{artist}'.encode()).hexdigest()[:8]}",
+                system_message="Você é um músico profissional. Responda de forma rápida e concisa."
+            ).with_model("openai", "gpt-5")
+            
+            # Shorter, more focused prompt for speed
+            message = UserMessage(
+                text=f"""Música: "{title}" de "{artist}"
+                
+                Responda APENAS JSON válido com cifras básicas:
+                {{
+                    "lyrics_with_chords": "[Verso 1]\\n     C              G              Am             F\\n(Letra básica com acordes posicionados)",
+                    "chords": "C - G - Am - F",
+                    "key": "C",
+                    "genre": "Popular", 
+                    "tempo": 120
+                }}
+                
+                Seja RÁPIDO, use estrutura simples."""
+            )
+            
+            # Set timeout for AI call
+            response = await asyncio.wait_for(
+                chat.send_message(message), 
+                timeout=8.0  # 8 second timeout
+            )
+            
+            try:
+                ai_data = json.loads(response)
+                result = {
+                    "lyrics": ai_data.get("lyrics_with_chords", self._get_basic_structure(title, artist)),
+                    "chords": ai_data.get("chords", "C - G - Am - F"),
+                    "key": ai_data.get("key", "C"),
+                    "genre": ai_data.get("genre", "Popular"),
+                    "tempo": ai_data.get("tempo", 120),
+                    "structure": "Verso - Refrão"
+                }
+                
+                # Cache AI result
+                if self.cache_service:
+                    await self.cache_service.set_cached_result(
+                        "ai_fallback",
+                        {"title": title.lower(), "artist": artist.lower()},
+                        result
+                    )
+                
+                return result
+                
+            except json.JSONDecodeError:
+                logging.warning("AI returned invalid JSON, using basic fallback")
+                return self._get_basic_structure(title, artist)
+                
+        except asyncio.TimeoutError:
+            logging.warning(f"AI timeout for {title} by {artist}, using basic fallback")
+            return self._get_basic_structure(title, artist)
+        except Exception as e:
+            logging.error(f"AI fallback error: {e}")
+            return self._get_basic_structure(title, artist)
+    
+    def _get_basic_structure(self, title: str, artist: str) -> Dict[str, Any]:
+        """Ultra-fast basic structure when all else fails"""
+        return {
+            "lyrics": f"[Verso 1]\n     C              G              Am             F\n{title} - {artist}\n     C              G              F              G\nEstrutura básica para ensaio\n\n[Refrão]\n     F              C              G              Am\nRefrão de {title}\n     F              C              G              C\nConsulte fontes oficiais",
+            "chords": "C - G - Am - F",
+            "key": "C",
+            "genre": "Popular",
+            "tempo": 120,
+            "structure": "Verso - Refrão"
+        }
+
     async def _generate_ai_fallback(self, title: str, artist: str, existing_data: Dict) -> Dict[str, Any]:
         """Generate AI-powered chord charts and missing data"""
         try:
