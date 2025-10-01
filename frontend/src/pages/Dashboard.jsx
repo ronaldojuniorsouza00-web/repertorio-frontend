@@ -272,6 +272,16 @@ const Dashboard = () => {
             ))}
           </div>
         </div>
+        
+        {/* Instrument Selector Modal */}
+        <InstrumentSelector
+          isOpen={showInstrumentSelector}
+          onSelect={handleInstrumentSelected}
+          onClose={() => {
+            setShowInstrumentSelector(false);
+            setPendingRoomCode('');
+          }}
+        />
       </div>
     </div>
   );
