@@ -887,7 +887,7 @@ async def start_recording(
 async def stop_recording(
     room_id: str, 
     recording_id: str,
-    duration: int,
+    duration: int = Query(..., description="Duration of the recording in seconds"),
     current_user: User = Depends(get_current_user)
 ):
     # Update recording with duration
