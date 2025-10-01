@@ -203,6 +203,35 @@ const Room = () => {
     }
   };
 
+  const handleTranspose = async (e) => {
+    e.preventDefault();
+    if (!transposeForm.from_key || !transposeForm.to_key) {
+      toast.error('Selecione ambos os tons');
+      return;
+    }
+    
+    if (transposeForm.from_key === transposeForm.to_key) {
+      toast.error('Os tons devem ser diferentes');
+      return;
+    }
+    
+    try {
+      await api.transposeRoom(roomId, transposeForm, token);
+      toast.success(`Transposição realizada de ${transposeForm.from_key} para ${transposeForm.to_key}`);
+      setShowTranspose(false);
+      setTransposeForm({ from_key: '', to_key: '' });
+      
+      // Emit real-time update
+      socketService.emitTransposeChange(roomId, transposeForm.to_key);
+      
+      // Refresh room data
+      await loadRoomData();
+    } catch (error) {
+      console.error('Error transposing:', error);
+      toast.error('Erro ao transpor repertório');
+    }
+  };
+
   const copyRoomCode = () => {
     navigator.clipboard.writeText(roomData.room.code);
     toast.success('Código copiado para área de transferência!');
