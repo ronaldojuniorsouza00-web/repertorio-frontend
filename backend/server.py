@@ -1050,6 +1050,61 @@ async def toggle_presentation_mode(
     
     return {"message": f"Presentation mode {'enabled' if enabled else 'disabled'}"}
 
+# Room Settings Control
+@api_router.post("/rooms/{room_id}/settings")
+async def update_room_settings(
+    room_id: str,
+    settings: SongControlSettings,
+    current_user: User = Depends(get_current_user)
+):
+    room = await db.rooms.find_one({"id": room_id})
+    if not room:
+        raise HTTPException(status_code=404, detail="Room not found")
+    
+    # Check if user is admin for tempo/key changes, anyone can change font size
+    if (settings.tempo is not None or settings.key is not None) and room["admin_id"] != current_user.id:
+        raise HTTPException(status_code=403, detail="Only admin can change tempo and key")
+    
+    update_data = {}
+    if settings.tempo is not None:
+        update_data["current_tempo"] = settings.tempo
+    if settings.key is not None and settings.key in CHORD_MAPPINGS:
+        # Transpose current song if exists
+        if room.get("current_song_id"):
+            song = await db.songs.find_one({"id": room["current_song_id"]})
+            if song:
+                old_key = song.get("key", "C")
+                new_chords = transpose_chords_string(song.get("chords", ""), old_key, settings.key)
+                await db.songs.update_one(
+                    {"id": room["current_song_id"]},
+                    {"$set": {"key": settings.key, "chords": new_chords}}
+                )
+    if settings.font_size is not None:
+        update_data["font_size"] = settings.font_size
+    
+    if update_data:
+        await db.rooms.update_one({"id": room_id}, {"$set": update_data})
+        
+        # Emit real-time update
+        await sio.emit('room_settings_changed', {
+            'settings': update_data,
+            'changed_by': current_user.name
+        }, room=room_id)
+    
+    return {"message": "Settings updated successfully", "settings": update_data}
+
+@api_router.get("/rooms/{room_id}/settings")
+async def get_room_settings(room_id: str, current_user: User = Depends(get_current_user)):
+    room = await db.rooms.find_one({"id": room_id})
+    if not room:
+        raise HTTPException(status_code=404, detail="Room not found")
+    
+    return {
+        "current_tempo": room.get("current_tempo", 120),
+        "font_size": room.get("font_size", 16),
+        "presentation_mode": room.get("presentation_mode", False)
+    }
+
 # Basic Routes
 @api_router.get("/")
 async def root():
