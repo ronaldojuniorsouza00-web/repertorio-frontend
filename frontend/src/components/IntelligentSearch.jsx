@@ -7,6 +7,7 @@ import { Badge } from './ui/badge';
 import { Search, Sparkles, Music, Plus, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { api, useAuth } from '../App';
+import { SmartLoading } from './LoadingStates';
 
 const IntelligentSearch = ({ onSongSelect, isOpen, onClose }) => {
   const { token } = useAuth();
