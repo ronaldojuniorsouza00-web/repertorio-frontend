@@ -26,19 +26,7 @@ const Dashboard = () => {
     room_code: ''
   });
 
-  useEffect(() => {
-    loadInstruments();
-  }, []);
-
-  const loadInstruments = async () => {
-    try {
-      const instrumentsData = await api.getInstruments();
-      setInstruments(instrumentsData);
-    } catch (error) {
-      console.error('Error loading instruments:', error);
-      toast.error('Erro ao carregar instrumentos');
-    }
-  };
+  // Instrument loading removed - no longer needed for collaborative system
 
   const handleCreateRoom = async (e) => {
     e.preventDefault();
