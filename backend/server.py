@@ -97,6 +97,15 @@ class Song(BaseModel):
     key: Optional[str] = None
     genre: Optional[str] = None
     tempo: Optional[int] = None
+    # New fields from real APIs
+    album: Optional[str] = None
+    release_date: Optional[str] = None
+    popularity: Optional[int] = None
+    preview_url: Optional[str] = None
+    duration_ms: Optional[int] = None
+    spotify_data: Optional[Dict[str, Any]] = None
+    genius_url: Optional[str] = None
+    structure: Optional[str] = None
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 class SongCreate(BaseModel):
