@@ -364,6 +364,69 @@ const Room = () => {
                     <Lightbulb className="w-4 h-4 mr-2" />
                     Recomendações IA
                   </Button>
+                  
+                  <Dialog open={showTranspose} onOpenChange={setShowTranspose}>
+                    <DialogTrigger asChild>
+                      <Button 
+                        variant="outline"
+                        className="border-amber-200 hover:bg-amber-50"
+                        data-testid="transpose-button"
+                      >
+                        <RotateCcw className="w-4 h-4 mr-2" />
+                        Transpor
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>Transpor Repertório</DialogTitle>
+                      </DialogHeader>
+                      <form onSubmit={handleTranspose} className="space-y-4" data-testid="transpose-form">
+                        <div className="grid grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <Label>Tom Atual</Label>
+                            <Select 
+                              value={transposeForm.from_key} 
+                              onValueChange={(value) => setTransposeForm({...transposeForm, from_key: value})}
+                            >
+                              <SelectTrigger data-testid="from-key-select">
+                                <SelectValue placeholder="Selecione" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {musicalKeys.map((key) => (
+                                  <SelectItem key={key} value={key}>{key}</SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          
+                          <div className="space-y-2">
+                            <Label>Tom Desejado</Label>
+                            <Select 
+                              value={transposeForm.to_key} 
+                              onValueChange={(value) => setTransposeForm({...transposeForm, to_key: value})}
+                            >
+                              <SelectTrigger data-testid="to-key-select">
+                                <SelectValue placeholder="Selecione" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {musicalKeys.map((key) => (
+                                  <SelectItem key={key} value={key}>{key}</SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        </div>
+                        
+                        <Button 
+                          type="submit" 
+                          className="w-full bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white"
+                          data-testid="transpose-submit-button"
+                        >
+                          Transpor Repertório
+                        </Button>
+                      </form>
+                    </DialogContent>
+                  </Dialog>
                 </>
               )}
             </div>
