@@ -181,29 +181,33 @@ class ImprovedMusicService:
             ).with_model("openai", "gpt-5")
             
             message = UserMessage(text=f"""
-            Preciso de informações sobre a música "{title}" do artista "{artist}".
+            Crie uma letra ORIGINAL inspirada no título "{title}" e artista "{artist}".
             
-            IMPORTANTE: Na letra, inclua as cifras (acordes) integradas usando colchetes, como [C], [F], [G].
-            Posicione os acordes acima das palavras onde a mudança deve acontecer.
-            
-            Exemplo de formato:
-            [C]When I find my[G]self in times of [Am]trouble
-            [F]Mother Mary [C]comes to me
+            IMPORTANTE: 
+            - Crie letras ORIGINAIS, não reproduza conteúdo protegido por direitos autorais
+            - A letra deve ser inspirada no título e estilo do artista
+            - Inclua estrutura completa: versos, refrão, ponte
+            - Mínimo de 20 linhas de letra
             
             Forneça no seguinte formato JSON:
             {{
-                "title": "Título da música",
-                "artist": "Nome do artista",
-                "lyrics": "Letra completa COM CIFRAS integradas usando colchetes [C], [F], [G] etc",
+                "title": "{title}",
+                "artist": "{artist}",
+                "lyrics": "Letra original completa inspirada no título (mínimo 20 linhas)",
                 "chords": "Sequência de acordes principais (ex: C F G Am)",
-                "genre": "Gênero musical",
-                "key": "Tom da música (ex: C, G, F)",
+                "genre": "Gênero musical apropriado",
+                "key": "Tom sugerido (ex: C, G, F)",
                 "bpm": 120,
                 "duration": 240,
-                "source": "ai_generated"
+                "source": "ai_inspired"
             }}
             
-            Se a música existir na vida real, use as informações reais com cifras corretas.
+            Exemplo de estrutura:
+            Verso 1 (4 linhas)
+            Refrão (4 linhas)
+            Verso 2 (4 linhas)  
+            Refrão (4 linhas)
+            Ponte (4 linhas)
             """)
             
             response = await chat.send_message(message)
