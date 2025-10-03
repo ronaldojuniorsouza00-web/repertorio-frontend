@@ -71,33 +71,33 @@ class ImprovedMusicService:
             Oh, [Dm]I be[G]lieve in [Bb]yester[F]day
             """,
             "let_it_be": """
-            When I find myself in times of trouble
-            Mother Mary comes to me
-            Speaking words of wisdom, let it be
+            [C]When I find myself in [G]times of trouble
+            [Am]Mother Mary [F]comes to me
+            [C]Speaking words of [G]wisdom, let it [F]be [C]
             
-            And in my hour of darkness
-            She is standing right in front of me
-            Speaking words of wisdom, let it be
+            [C]And in my hour of [G]darkness
+            [Am]She is standing [F]right in front of me
+            [C]Speaking words of [G]wisdom, let it [F]be [C]
             
-            Let it be, let it be
-            Let it be, let it be
-            Whisper words of wisdom, let it be
+            [Am]Let it be, [G]let it be
+            [F]Let it be, [C]let it be
+            [G]Whisper words of [F]wisdom, let it [C]be
             
-            And when the broken-hearted people
-            Living in the world agree
-            There will be an answer, let it be
+            [C]And when the broken-[G]hearted people
+            [Am]Living in the [F]world agree
+            [C]There will be an [G]answer, let it [F]be [C]
             
-            For though they may be parted
-            There is still a chance that they will see
-            There will be an answer, let it be
+            [C]For though they may be [G]parted
+            [Am]There is still a [F]chance that they will see
+            [C]There will be an [G]answer, let it [F]be [C]
             
-            Let it be, let it be
-            Let it be, let it be
-            Yeah, there will be an answer, let it be
+            [Am]Let it be, [G]let it be
+            [F]Let it be, [C]let it be
+            [G]Yeah, there will be an [F]answer, let it [C]be
             
-            Let it be, let it be
-            Let it be, let it be
-            Whisper words of wisdom, let it be
+            [Am]Let it be, [G]let it be
+            [F]Let it be, [C]let it be
+            [G]Whisper words of [F]wisdom, let it [C]be
             """
         }
         
