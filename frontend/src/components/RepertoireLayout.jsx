@@ -9,7 +9,10 @@ import {
   ChevronUp, 
   SkipForward,
   ArrowRight,
-  Zap
+  Zap,
+  Play,
+  Pause,
+  Timer
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { api, useAuth } from '../App';
