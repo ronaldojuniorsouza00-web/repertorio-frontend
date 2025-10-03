@@ -271,15 +271,54 @@ const RepertoireLayout = ({
                 <SkipForward className="w-5 h-5 mr-2 text-green-600" />
                 Próximas Músicas ({nextSongs.length})
               </CardTitle>
-              <Button
-                onClick={() => setShowTransitions(!showTransitions)}
-                variant="outline"
-                size="sm"
-                className="border-gray-300"
-              >
-                {showTransitions ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-                {showTransitions ? 'Ocultar' : 'Mostrar'} Transições
-              </Button>
+              <div className="flex items-center space-x-2">
+                <Button
+                  onClick={() => setShowTransitions(!showTransitions)}
+                  variant="outline"
+                  size="sm"
+                  className="border-gray-300"
+                >
+                  {showTransitions ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                  {showTransitions ? 'Ocultar' : 'Mostrar'} Transições
+                </Button>
+                
+                {/* Configurações do Timer */}
+                <Dialog open={showTimerSettings} onOpenChange={setShowTimerSettings}>
+                  <DialogTrigger asChild>
+                    <Button variant="outline" size="sm" className="border-blue-200 text-blue-600">
+                      <Timer className="w-4 h-4" />
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="max-w-md">
+                    <DialogHeader>
+                      <DialogTitle>Configurações do Timer</DialogTitle>
+                    </DialogHeader>
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between">
+                        <Label htmlFor="auto-advance">Avanço Automático</Label>
+                        <Switch
+                          id="auto-advance"
+                          checked={autoAdvanceEnabled}
+                          onCheckedChange={setAutoAdvanceEnabled}
+                        />
+                      </div>
+                      <div className="text-sm text-gray-600">
+                        {autoAdvanceEnabled ? 
+                          '✅ As músicas vão passar automaticamente baseado na duração' : 
+                          '⏸️ Você precisa pular manualmente as músicas'
+                        }
+                      </div>
+                      {isTimerActive && (
+                        <div className="p-3 bg-green-50 rounded-lg">
+                          <p className="text-sm text-green-800">
+                            ⏰ Timer ativo: {Math.floor(timeRemaining / 60)}:{String(timeRemaining % 60).padStart(2, '0')} restantes
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  </DialogContent>
+                </Dialog>
+              </div>
             </div>
           </CardHeader>
           
