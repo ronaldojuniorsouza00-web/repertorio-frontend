@@ -16,36 +16,36 @@ class ImprovedMusicService:
         self.cache_service = cache_service
         self.llm_key = os.getenv('EMERGENT_LLM_KEY')
         
-        # Cache de letras conhecidas (fallback quando APIs falham)
+        # Cache de letras conhecidas com cifras integradas (fallback quando APIs falham)
         self.lyrics_database = {
             "imagine": """
-            Imagine there's no heaven
-            It's easy if you try
-            No hell below us
-            Above us only sky
-            Imagine all the people living for today
+            [C]Imagine there's no [Cmaj7]heaven
+            [F]It's easy if you [C]try
+            [C]No hell be[Cmaj7]low us
+            [F]Above us only [C]sky
+            [Am]Imagine [Dm]all the [G]people living for to[C]day
             
-            Imagine there's no countries
-            It isn't hard to do
-            Nothing to kill or die for
-            And no religion too
-            Imagine all the people living life in peace
+            [C]Imagine there's no [Cmaj7]countries
+            [F]It isn't hard to [C]do
+            [C]Nothing to kill or [Cmaj7]die for
+            [F]And no religion [C]too
+            [Am]Imagine [Dm]all the [G]people living life in [C]peace
             
-            You may say I'm a dreamer
-            But I'm not the only one
-            I hope someday you'll join us
-            And the world will be as one
+            [F]You may say I'm a [G]dreamer
+            [C]But I'm not the [E7]only one
+            [F]I hope someday you'll [G]join us
+            [C]And the world will be as [G]one
             
-            Imagine no possessions
-            I wonder if you can
-            No need for greed or hunger
-            A brotherhood of man
-            Imagine all the people sharing all the world
+            [C]Imagine no pos[Cmaj7]sessions
+            [F]I wonder if you [C]can
+            [C]No need for greed or [Cmaj7]hunger
+            [F]A brotherhood of [C]man
+            [Am]Imagine [Dm]all the [G]people sharing all the [C]world
             
-            You may say I'm a dreamer
-            But I'm not the only one
-            I hope someday you'll join us
-            And the world will be as one
+            [F]You may say I'm a [G]dreamer
+            [C]But I'm not the [E7]only one
+            [F]I hope someday you'll [G]join us
+            [C]And the world will be as [G]one
             """,
             "yesterday": """
             Yesterday, all my troubles seemed so far away
