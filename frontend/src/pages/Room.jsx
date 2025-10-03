@@ -121,6 +121,20 @@ const Room = () => {
     socketService.onSongChanged(handleSongChanged);
     socketService.onTransposeChanged(handleTransposeChanged);
     
+    // New event listeners
+    const handlePlaylistLoaded = (data) => {
+      toast.success(`📋 Repertório "${data.repertoire_name}" carregado por ${data.loaded_by}`);
+      loadRoomData();
+    };
+    
+    const handleTempoChanged = (data) => {
+      toast.info(`🎵 Velocidade alterada: ${data.new_tempo} BPM por ${data.changed_by}`);
+      setCurrentSongTempo(data.new_tempo);
+    };
+    
+    socketService.onPlaylistLoaded(handlePlaylistLoaded);
+    socketService.onTempoChanged(handleTempoChanged);
+    
     return () => {
       // Leave room and cleanup
       if (user && roomId) {
