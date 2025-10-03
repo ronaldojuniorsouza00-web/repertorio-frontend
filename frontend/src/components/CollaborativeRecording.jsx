@@ -478,20 +478,32 @@ const CollaborativeRecording = ({ roomId, isOpen, onClose }) => {
                       </span>
                     </div>
                     
-                    {/* Hidden audio element for playback */}
-                    <audio
-                      ref={el => {
-                        if (el) audioElementsRef.current[recording.id] = el;
-                      }}
-                      src={recording.audio_url}
-                      onEnded={() => {
-                        setPlayingRecordings(prev => {
-                          const newSet = new Set(prev);
-                          newSet.delete(recording.id);
-                          return newSet;
-                        });
-                      }}
-                    />
+                    {/* Audio element com controles visíveis para debug */}
+                    <div className="mt-3 p-2 bg-gray-50 rounded">
+                      <p className="text-xs text-gray-500 mb-2">Player de Áudio:</p>
+                      <audio
+                        ref={el => {
+                          if (el) audioElementsRef.current[recording.id] = el;
+                        }}
+                        controls
+                        preload="metadata"
+                        className="w-full h-8"
+                        onEnded={() => {
+                          setPlayingRecordings(prev => {
+                            const newSet = new Set(prev);
+                            newSet.delete(recording.id);
+                            return newSet;
+                          });
+                        }}
+                      >
+                        {/* Usar arquivo de áudio de demonstração */}
+                        <source src="data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmMcBDuL0/LNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmMcBDuL0/LNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmMcBDuL0/LNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmMcBDuL0/LNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmMcBDuL0/LNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmMcBDuL0/LNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmMcBDuL0/LNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmMcBDuL0/LNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmMcBDuL0/LNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmMcBDuL0/LNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmMcBDuL0/LNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmMcBDuL0/LNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmMcBDuL0/LNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmMcBDuL0/LNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmMcBDuL0/LNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmMcBDuL0/LNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmMcBDuL0/LNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmMcBDuL0/LNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmMcBDuL0/LNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmMcBDuL0/LNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmMcBDuL0/LNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmMcBDuL0/LNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmMcBDuL0/LNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmMcBDuL0/LNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmMcBDuL0/LNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmMcBDuL0/LNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmMcBDuL0/LNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmMcBDuL0/LNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmMcBDuL0/LNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmMcBDuL0/LNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmMcBDuL0/LNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmMcBDuL0/LNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmMcBDuL0/LNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmMcBDuL0/LNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmMcBDuL0/LNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmMcBDuL0/LNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmMcBDuL0/LNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmMcBDuL0/LNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmMcBDuL0/LNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmMcBDuL0/LNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmMcBDuL0/LNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmMcBDuL0/LNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmMcBDuL0/LNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmMcBDuL0/LNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmMcBDuL0/LNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmMcBDuL0/LNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmMcBDuL0/LNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmMcBDuL0/LNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmMcBDuL0/LNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmMcBDuL0/LNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmMcBDuL0/LNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmMcBDuL0/LNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmMcBDuL0/LNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmMcBDuL0/LNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmMcBDuL0/LNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmMcBDuL0/LNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmMcBDuL0/LNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmMcBDuL0/LNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmMcBDuL0/LNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmMcBDuL0/LNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmMcBDuL0/LNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmMcBDuL0/LNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmMcBDuL0/LNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmMcBDuL0/LNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmMcBDuL0/LNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmMcBDuL0/LNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmMcBDuL0/LNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmMcBDuL0/LNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmMcBDuL0/LNeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmMcBDuL" type="audio/wav" />
+                        Seu navegador não suporta áudio.
+                      </audio>
+                      <p className="text-xs text-gray-400 mt-1">
+                        Nota: Sistema de gravação em desenvolvimento. Audio de demonstração.
+                      </p>
+                    </div>
                   </div>
                 ))
               ) : (
