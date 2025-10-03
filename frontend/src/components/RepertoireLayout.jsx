@@ -29,6 +29,10 @@ const RepertoireLayout = ({
   const [transitionChords, setTransitionChords] = useState([]);
   const [showTransitions, setShowTransitions] = useState(true);
   const [loadingTransitions, setLoadingTransitions] = useState(false);
+  const [timeRemaining, setTimeRemaining] = useState(0);
+  const [isTimerActive, setIsTimerActive] = useState(false);
+  const [timerPaused, setTimerPaused] = useState(false);
+  const timerRef = React.useRef(null);
 
   useEffect(() => {
     if (playlist.length > 1) {
