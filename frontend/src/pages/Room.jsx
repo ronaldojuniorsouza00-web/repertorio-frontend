@@ -1281,12 +1281,7 @@ const Room = () => {
           }}
         />
         
-        {/* Collaborative Recording Component */}
-        <CollaborativeRecording
-          roomId={roomId}
-          isOpen={showCollaborativeRecording}
-          onClose={() => setShowCollaborativeRecording(false)}
-        />
+        {/* Sistema de gravação removido - foco no repertório musical */}
 
         {/* Repertoire History Component */}
         <RepertoireHistory
