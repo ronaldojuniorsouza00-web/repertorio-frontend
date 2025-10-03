@@ -34,6 +34,8 @@ import AudioRecognition from '../components/AudioRecognition';
 import RecommendationsDialog from '../components/RecommendationsDialog';
 import NextSongBar from '../components/NextSongBar';
 import CollaborativeRecording from '../components/CollaborativeRecording';
+import LyricsAutoScroll from '../components/LyricsAutoScroll';
+import RepertoireHistory from '../components/RepertoireHistory';
 import { SmartLoading } from '../components/LoadingStates';
 
 const Room = () => {
