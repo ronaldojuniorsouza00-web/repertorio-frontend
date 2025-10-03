@@ -210,6 +210,10 @@ class EnhancedRoomSettings(BaseModel):
 class SpeedControlRequest(BaseModel):
     tempo_change: int  # +/- BPM change
 
+class SongForm(BaseModel):
+    title: str
+    artist: str = ""
+
 class AIRepertoireRequest(BaseModel):
     style: str  # "rock", "pop", "jazz", etc.
     duration_minutes: Optional[int] = 60
