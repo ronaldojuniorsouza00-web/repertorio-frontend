@@ -181,6 +181,33 @@ class Recording(BaseModel):
 class StartRecordingRequest(BaseModel):
     recording_name: str
 
+# Repertoire History Models
+class RepertoireHistory(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    room_id: str
+    name: str
+    songs: List[str] = Field(default_factory=list)  # List of song IDs
+    created_by: str
+    created_by_name: str
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    is_favorite: bool = False
+
+class CreateRepertoireRequest(BaseModel):
+    name: str
+    song_ids: List[str]
+
+# Enhanced Room Settings
+class EnhancedRoomSettings(BaseModel):
+    current_tempo: int = 120
+    font_size: int = 16
+    presentation_mode: bool = False
+    auto_scroll: bool = False
+    scroll_speed: int = 30  # seconds per screen
+    key_transpose: int = 0  # semitones to transpose
+
+class SpeedControlRequest(BaseModel):
+    tempo_change: int  # +/- BPM change
+
 class AIRepertoireRequest(BaseModel):
     style: str  # "rock", "pop", "jazz", etc.
     duration_minutes: Optional[int] = 60
