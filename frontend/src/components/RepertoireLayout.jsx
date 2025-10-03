@@ -223,6 +223,29 @@ const RepertoireLayout = ({
                   </div>
                 </div>
               )}
+
+              {/* Barra de Progresso da Música */}
+              {isTimerActive && currentSong.duration && (
+                <div className="bg-white rounded-lg p-4 border border-green-200">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-sm font-medium text-green-800">Progresso da Música</span>
+                    <span className="text-sm text-green-600">
+                      {Math.floor((currentSong.duration - timeRemaining) / 60)}:{String((currentSong.duration - timeRemaining) % 60).padStart(2, '0')} / {formatDuration(currentSong.duration)}
+                    </span>
+                  </div>
+                  <div className="w-full bg-green-100 rounded-full h-3">
+                    <div 
+                      className="bg-gradient-to-r from-green-500 to-green-600 h-3 rounded-full transition-all duration-1000"
+                      style={{ 
+                        width: `${((currentSong.duration - timeRemaining) / currentSong.duration) * 100}%` 
+                      }}
+                    />
+                  </div>
+                  <p className="text-xs text-green-600 mt-2 flex items-center">
+                    ⏰ {timerPaused ? 'Timer pausado' : `Próxima música em ${Math.floor(timeRemaining / 60)}:${String(timeRemaining % 60).padStart(2, '0')}`}
+                  </p>
+                </div>
+              )}
             </div>
           </CardContent>
         </Card>
