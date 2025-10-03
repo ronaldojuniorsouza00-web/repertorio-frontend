@@ -584,6 +584,211 @@ async def transpose_song(
         "new_chords": new_chords
     }
 
+# Enhanced Search with Improved Service
+@api_router.post("/songs/search-enhanced")
+async def search_song_enhanced(
+    song_form: SongForm, 
+    current_user: User = Depends(get_current_user)
+):
+    """
+    Busca aprimorada com fallback por IA
+    """
+    try:
+        # Usar o novo serviço aprimorado
+        song_data = await improved_music_service.search_song_enhanced(
+            song_form.title, 
+            song_form.artist
+        )
+        
+        # Criar novo ID e salvar no banco
+        song_data["id"] = str(uuid.uuid4())
+        song = Song(**song_data)
+        await db.songs.insert_one(song.dict())
+        
+        return song
+        
+    except Exception as e:
+        logging.error(f"Enhanced search error: {e}")
+        raise HTTPException(status_code=500, detail="Erro na busca aprimorada")
+
+# Repertoire History Management
+@api_router.post("/rooms/{room_id}/repertoire/save")
+async def save_repertoire(
+    room_id: str,
+    repertoire_data: CreateRepertoireRequest,
+    current_user: User = Depends(get_current_user)
+):
+    """
+    Salva repertório atual como histórico
+    """
+    # Verificar se usuário está na sala
+    room = await db.rooms.find_one({"id": room_id})
+    if not room:
+        raise HTTPException(status_code=404, detail="Room not found")
+    
+    # Criar histórico de repertório
+    repertoire = RepertoireHistory(
+        room_id=room_id,
+        name=repertoire_data.name,
+        songs=repertoire_data.song_ids,
+        created_by=current_user.id,
+        created_by_name=current_user.name
+    )
+    
+    await db.repertoire_history.insert_one(repertoire.dict())
+    
+    return {
+        "message": "Repertório salvo com sucesso",
+        "repertoire_id": repertoire.id
+    }
+
+@api_router.get("/rooms/{room_id}/repertoire/history")
+async def get_repertoire_history(
+    room_id: str,
+    current_user: User = Depends(get_current_user)
+):
+    """
+    Lista histórico de repertórios da sala
+    """
+    repertoires = await db.repertoire_history.find(
+        {"room_id": room_id}
+    ).sort("created_at", -1).to_list(100)
+    
+    return {
+        "repertoires": [RepertoireHistory(**rep) for rep in repertoires]
+    }
+
+@api_router.post("/rooms/{room_id}/repertoire/{repertoire_id}/load")
+async def load_repertoire(
+    room_id: str,
+    repertoire_id: str,
+    current_user: User = Depends(get_current_user)
+):
+    """
+    Carrega repertório do histórico
+    """
+    # Verificar permissões
+    room = await db.rooms.find_one({"id": room_id})
+    if not room:
+        raise HTTPException(status_code=404, detail="Room not found")
+    
+    repertoire = await db.repertoire_history.find_one({"id": repertoire_id, "room_id": room_id})
+    if not repertoire:
+        raise HTTPException(status_code=404, detail="Repertoire not found")
+    
+    # Atualizar playlist da sala
+    await db.rooms.update_one(
+        {"id": room_id},
+        {"$set": {"playlist": repertoire["songs"]}}
+    )
+    
+    # Emitir via WebSocket
+    await sio.emit('playlist_loaded', {
+        'repertoire_name': repertoire['name'],
+        'song_count': len(repertoire['songs']),
+        'loaded_by': current_user.name
+    }, room=room_id)
+    
+    return {
+        "message": f"Repertório '{repertoire['name']}' carregado com sucesso",
+        "song_count": len(repertoire['songs'])
+    }
+
+@api_router.delete("/rooms/{room_id}/repertoire/{repertoire_id}")
+async def delete_repertoire(
+    room_id: str,
+    repertoire_id: str,
+    current_user: User = Depends(get_current_user)
+):
+    """
+    Deleta repertório do histórico
+    """
+    repertoire = await db.repertoire_history.find_one({"id": repertoire_id, "room_id": room_id})
+    if not repertoire:
+        raise HTTPException(status_code=404, detail="Repertoire not found")
+    
+    # Só o criador ou admin da sala pode deletar
+    room = await db.rooms.find_one({"id": room_id})
+    if repertoire["created_by"] != current_user.id and room["admin_id"] != current_user.id:
+        raise HTTPException(status_code=403, detail="Not authorized")
+    
+    await db.repertoire_history.delete_one({"id": repertoire_id})
+    
+    return {"message": "Repertório removido do histórico"}
+
+# Speed and Tempo Control
+@api_router.post("/rooms/{room_id}/speed/adjust")
+async def adjust_room_speed(
+    room_id: str,
+    speed_data: SpeedControlRequest,
+    current_user: User = Depends(get_current_user)
+):
+    """
+    Ajusta velocidade/tempo da sala em tempo real
+    """
+    room = await db.rooms.find_one({"id": room_id})
+    if not room:
+        raise HTTPException(status_code=404, detail="Room not found")
+    
+    # Calcular novo tempo
+    current_tempo = room.get("current_tempo", 120)
+    new_tempo = max(60, min(200, current_tempo + speed_data.tempo_change))
+    
+    # Atualizar sala
+    await db.rooms.update_one(
+        {"id": room_id},
+        {"$set": {"current_tempo": new_tempo}}
+    )
+    
+    # Emitir mudança via WebSocket
+    await sio.emit('tempo_changed', {
+        'old_tempo': current_tempo,
+        'new_tempo': new_tempo,
+        'changed_by': current_user.name
+    }, room=room_id)
+    
+    return {
+        "message": "Velocidade ajustada",
+        "new_tempo": new_tempo,
+        "change": speed_data.tempo_change
+    }
+
+# Fast AI Repertoire Generation
+@api_router.post("/rooms/{room_id}/generate-repertoire-fast")
+async def generate_repertoire_fast(
+    room_id: str,
+    repertoire_data: RepertoireGenerationRequest,
+    current_user: User = Depends(get_current_user)
+):
+    """
+    Geração rápida de repertório com cache agressivo
+    """
+    try:
+        # Usar serviço aprimorado
+        songs = await improved_music_service.generate_ai_repertoire_fast(
+            room_id, 
+            repertoire_data.genre,
+            repertoire_data.song_count
+        )
+        
+        # Salvar músicas no banco
+        song_ids = []
+        for song_data in songs:
+            song_data["id"] = str(uuid.uuid4())
+            song = Song(**song_data)
+            await db.songs.insert_one(song.dict())
+            song_ids.append(song.id)
+        
+        return {
+            "message": "Repertório gerado rapidamente!",
+            "songs": songs,
+            "count": len(songs)
+        }
+        
+    except Exception as e:
+        logging.error(f"Fast repertoire generation error: {e}")
+        raise HTTPException(status_code=500, detail="Erro na geração rápida")
+
 # Room Routes
 @api_router.post("/rooms/create", response_model=Room)
 async def create_room(room_data: RoomCreate, current_user: User = Depends(get_current_user)):
