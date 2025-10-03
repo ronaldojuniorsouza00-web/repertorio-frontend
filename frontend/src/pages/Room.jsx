@@ -972,7 +972,7 @@ const Room = () => {
                           </div>
                           <Slider
                             value={[currentTempo]}
-                            onValueChange={handleTempoChange}
+                            onValueChange={handleTempoSliderChange}
                             max={200}
                             min={60}
                             step={1}
