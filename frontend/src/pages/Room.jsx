@@ -570,6 +570,29 @@ const Room = () => {
                 <Users className="w-4 h-4 mr-2" />
                 Gravações
               </Button>
+
+              {/* Repertoire History */}
+              <Button 
+                onClick={() => setShowRepertoireHistory(true)}
+                variant="outline"
+                size="sm"
+                className="border-indigo-200 hover:bg-indigo-50 text-indigo-600"
+              >
+                <History className="w-4 h-4 mr-2" />
+                Histórico
+              </Button>
+
+              {/* Fast Repertoire Generation */}
+              <Button 
+                onClick={handleGenerateRepertoireFast}
+                variant="outline"
+                size="sm"
+                className="border-green-200 hover:bg-green-50 text-green-600"
+                disabled={loading}
+              >
+                <Zap className="w-4 h-4 mr-2" />
+                Repertório Rápido
+              </Button>
               
               {/* Presentation Mode */}
               <Button 
