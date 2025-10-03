@@ -144,6 +144,54 @@ backend:
         agent: "testing"
         comment: "✅ VERIFIED: All collaborative recording endpoints working perfectly. POST /api/rooms/{room_id}/start-recording (with recording_name), POST /api/rooms/{room_id}/stop-recording/{recording_id}?duration=X, GET /api/rooms/{room_id}/recordings, POST /api/rooms/{room_id}/recordings/{recording_id}/play, POST /api/rooms/{room_id}/recordings/{recording_id}/pause, POST /api/rooms/{room_id}/recordings/{recording_id}/volume?volume=X, DELETE /api/rooms/{room_id}/recordings/{recording_id}. MongoDB persistence verified. Real-time WebSocket events working."
 
+  - task: "Enhanced Search System with AI Fallback"
+    implemented: true
+    working: true
+    file: "server.py, improved_music_services.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "✅ VERIFIED: POST /api/songs/search-enhanced working perfectly. Successfully tested with 'Imagine', 'Yesterday', and 'Let It Be'. All songs returned with complete lyrics and chords. AI fallback system functional when external APIs fail. Local database fallback working for known songs."
+
+  - task: "Repertoire History Management"
+    implemented: true
+    working: true
+    file: "server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "✅ VERIFIED: All repertoire history endpoints working perfectly. POST /api/rooms/{room_id}/repertoire/save successfully saves current playlist. GET /api/rooms/{room_id}/repertoire/history lists saved repertoires. POST /api/rooms/{room_id}/repertoire/{repertoire_id}/load restores playlist from history. DELETE /api/rooms/{room_id}/repertoire/{repertoire_id} removes from history. MongoDB persistence confirmed."
+
+  - task: "Real-time Speed Control"
+    implemented: true
+    working: true
+    file: "server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "✅ VERIFIED: POST /api/rooms/{room_id}/speed/adjust working perfectly. Successfully tested tempo increase (+10 BPM: 120→130) and decrease (-15 BPM: 130→115). Real-time WebSocket events emitted correctly. Tempo bounds enforced (60-200 BPM)."
+
+  - task: "Fast AI Repertoire Generation"
+    implemented: true
+    working: true
+    file: "server.py, improved_music_services.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "✅ VERIFIED: POST /api/rooms/{room_id}/generate-repertoire-fast working perfectly. Generated 5 rock songs quickly including 'Sweet Child O' Mine', 'Smells Like Teen Spirit', 'Back in Black'. Aggressive caching system functional. Default fallback repertoire available when AI unavailable."
+
 frontend:
   - task: "Remove InstrumentSelector component"
     implemented: true
