@@ -314,6 +314,78 @@ const Room = () => {
     }
   };
 
+  // Enhanced search with fallback
+  const handleAddSongEnhanced = async (e) => {
+    e.preventDefault();
+    if (!songForm.title.trim()) {
+      toast.error('Por favor, digite o título da música');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      toast.info('🔍 Buscando com sistema aprimorado...');
+      
+      const song = await api.searchSongEnhanced(songForm, token);
+      
+      if (song.source === 'local_database') {
+        toast.success(`✅ Encontrada na base local: "${song.title}"`);
+      } else if (song.source === 'ai_generated') {
+        toast.success(`🤖 Gerada por IA: "${song.title}"`);
+      } else {
+        toast.success(`✅ "${song.title}" encontrada!`);
+      }
+      
+      // Automatically add to playlist
+      await handleAddToPlaylist(song);
+      
+      setSongForm({ title: '', artist: '' });
+      setShowAddSong(false);
+      
+      toast.success(`🎵 "${song.title}" adicionada com letras!`);
+      
+    } catch (error) {
+      console.error('Error with enhanced search:', error);
+      toast.error('❌ Erro na busca aprimorada');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Speed control functions
+  const handleTempoChange = async (tempoChange) => {
+    try {
+      const response = await api.adjustRoomSpeed(roomId, tempoChange, token);
+      setCurrentSongTempo(response.new_tempo);
+      toast.success(`🎵 Velocidade ajustada: ${response.new_tempo} BPM`);
+    } catch (error) {
+      console.error('Error adjusting tempo:', error);
+      toast.error('Erro ao ajustar velocidade');
+    }
+  };
+
+  // Fast repertoire generation
+  const handleGenerateRepertoireFast = async () => {
+    try {
+      setLoading(true);
+      toast.info('🚀 Gerando repertório rapidamente...');
+      
+      const response = await api.generateRepertoireFast(roomId, {
+        genre: 'Rock/Pop',
+        song_count: 8
+      }, token);
+      
+      toast.success(`✨ ${response.count} músicas geradas rapidamente!`);
+      await loadRoomData();
+      
+    } catch (error) {
+      console.error('Error generating fast repertoire:', error);
+      toast.error('Erro na geração rápida');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   // Old recording functions removed - replaced by CollaborativeRecording component
 
   const togglePresentationMode = async () => {
