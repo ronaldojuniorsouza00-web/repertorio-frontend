@@ -112,24 +112,94 @@ const LyricsAutoScroll = ({
     setIsScrolling(!isScrolling);
   };
 
+  const parseLineWithChords = (line) => {
+    if (!line.trim()) return { chords: [], lyrics: '' };
+    
+    const parts = [];
+    const chordPattern = /\[([^\]]+)\]/g;
+    let lastIndex = 0;
+    let match;
+    
+    while ((match = chordPattern.exec(line)) !== null) {
+      // Adicionar texto antes do acorde
+      if (match.index > lastIndex) {
+        parts.push({
+          type: 'text',
+          content: line.substring(lastIndex, match.index)
+        });
+      }
+      
+      // Adicionar o acorde
+      parts.push({
+        type: 'chord',
+        content: match[1]
+      });
+      
+      lastIndex = chordPattern.lastIndex;
+    }
+    
+    // Adicionar texto restante
+    if (lastIndex < line.length) {
+      parts.push({
+        type: 'text',
+        content: line.substring(lastIndex)
+      });
+    }
+    
+    return parts;
+  };
+
   const formatLyrics = (lyricsText) => {
     if (!lyricsText) return "Letra não disponível";
     
     return lyricsText
       .split('\n')
-      .map((line, index) => (
-        <div 
-          key={index} 
-          className={`lyrics-line mb-2 ${line.trim() === '' ? 'mb-4' : ''}`}
-          style={{ 
-            fontSize: `${fontSize}px`,
-            lineHeight: '1.6',
-            minHeight: line.trim() === '' ? '20px' : 'auto'
-          }}
-        >
-          {line.trim() || '\u00A0'}
-        </div>
-      ));
+      .map((line, lineIndex) => {
+        if (!line.trim()) {
+          return (
+            <div key={lineIndex} className="mb-4" style={{ minHeight: '20px' }}>
+              \u00A0
+            </div>
+          );
+        }
+        
+        const parts = parseLineWithChords(line);
+        
+        return (
+          <div 
+            key={lineIndex} 
+            className="lyrics-line mb-3 relative"
+            style={{ 
+              fontSize: `${fontSize}px`,
+              lineHeight: '1.8',
+              minHeight: '40px'
+            }}
+          >
+            <div className="flex flex-wrap items-start">
+              {parts.map((part, partIndex) => (
+                <span key={partIndex} className="relative inline-block">
+                  {part.type === 'chord' ? (
+                    <>
+                      <span 
+                        className="absolute top-0 left-0 text-blue-600 font-bold text-sm transform -translate-y-6 bg-blue-50 px-1 rounded border border-blue-200"
+                        style={{ 
+                          fontSize: Math.max(12, fontSize - 2),
+                          whiteSpace: 'nowrap'
+                        }}
+                      >
+                        {part.content}
+                      </span>
+                      <span className="invisible">{part.content}</span>
+                    </>
+                  ) : (
+                    <span className="text-gray-800">{part.content}</span>
+                  )}
+                </span>
+              ))}
+            </div>
+          </div>
+        );
+      });
   };
 
   return (
