@@ -1158,8 +1158,9 @@ const Room = () => {
                     </TabsList>
                     
                     <TabsContent value="lyrics" className="mt-4">
-                      <LyricsAutoScroll
+                      <SimpleLyricsDisplay
                         lyrics={roomData.current_song.lyrics}
+                        chords={roomData.current_song.chords}
                         bpm={currentSongTempo || roomData.current_song.bpm || 120}
                         fontSize={fontSize}
                         onTempoChange={handleTempoChange}
