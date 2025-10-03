@@ -214,6 +214,10 @@ class SongForm(BaseModel):
     title: str
     artist: str = ""
 
+class RepertoireGenerationRequest(BaseModel):
+    genre: str
+    song_count: int = 10
+
 class AIRepertoireRequest(BaseModel):
     style: str  # "rock", "pop", "jazz", etc.
     duration_minutes: Optional[int] = 60
