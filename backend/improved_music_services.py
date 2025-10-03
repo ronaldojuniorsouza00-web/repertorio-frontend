@@ -252,15 +252,16 @@ class ImprovedMusicService:
         for line in lines:
             line = line.strip()
             # Pular linhas que são claramente metadados
-            if any(word in line.lower() for word in ['json', '{', '}', 'bpm', 'genre', 'key', 'duration']):
+            if any(word in line.lower() for word in ['json', '{', '}', 'bpm', 'genre', 'key', 'duration', 'verso', 'refrão', 'ponte']):
                 continue
-            if line and not line.startswith('#') and not line.startswith('*'):
+            if line and not line.startswith('#') and not line.startswith('*') and not line.startswith('[') and not line.startswith('```'):
                 lyrics_lines.append(line)
         
-        if lyrics_lines:
-            return '\n'.join(lyrics_lines[:20])  # Limitar a 20 linhas
+        if lyrics_lines and len(lyrics_lines) >= 8:
+            return '\n'.join(lyrics_lines)
         else:
-            return f"Letra da música {text[:100]}..." if len(text) > 100 else text
+            # Fallback: criar letra básica inspirada no título
+            return self._create_basic_inspired_lyrics(text)
     
     def _create_fallback_song(self, title: str, artist: str) -> Dict[str, Any]:
         """
