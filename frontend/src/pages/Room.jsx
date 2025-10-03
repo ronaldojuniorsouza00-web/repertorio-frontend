@@ -1299,6 +1299,14 @@ const Room = () => {
           onClose={() => setShowCollaborativeRecording(false)}
         />
 
+        {/* Repertoire History Component */}
+        <RepertoireHistory
+          roomId={roomId}
+          currentPlaylist={playlist}
+          isOpen={showRepertoireHistory}
+          onClose={() => setShowRepertoireHistory(false)}
+        />
+
         {/* Fixed Next Song Bar */}
         <NextSongBar
           nextSong={roomData?.next_song}
