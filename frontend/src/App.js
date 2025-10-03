@@ -297,6 +297,14 @@ export const api = {
       headers: { Authorization: `Bearer ${token}` }
     });
     return response.data;
+  },
+
+  // Transition Chords
+  getTransitionChords: async (roomId, token) => {
+    const response = await axios.get(`${API}/rooms/${roomId}/transition-chords`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    return response.data;
   }
 };
 
