@@ -638,15 +638,27 @@ def main():
     
     tester = MusicMaestroAPITester()
     
-    # Test sequence - focusing on core functionality
+    # Test sequence - focusing on NEW functionality as requested
     tests = [
         ("Basic Health Check", tester.test_basic_health),
         ("User Registration", tester.test_register),
         ("User Login", tester.test_login),
-        ("Instruments Endpoint Removed", tester.test_instruments_removed),
         ("Create Room", tester.test_create_room),
         ("Join Room (No Instrument)", tester.test_join_room),
-        ("Get AI Recommendations", tester.test_get_recommendations),
+        
+        # NEW FUNCTIONALITY TESTS - Main Focus
+        ("Enhanced Search System", tester.test_enhanced_search),
+        ("Add Songs to Playlist", tester.test_add_songs_to_playlist),
+        ("Get Room Playlist", tester.test_get_playlist),
+        ("Save Repertoire to History", tester.test_save_repertoire),
+        ("Get Repertoire History", tester.test_get_repertoire_history),
+        ("Load Repertoire from History", tester.test_load_repertoire),
+        ("Speed Control - Tempo Adjustment", tester.test_speed_control),
+        ("Fast Repertoire Generation", tester.test_fast_repertoire_generation),
+        ("Delete Repertoire from History", tester.test_delete_repertoire),
+        
+        # Previous functionality (brief check)
+        ("Instruments Endpoint Removed", tester.test_instruments_removed),
         ("Start Recording", tester.test_start_recording),
         ("Stop Recording", tester.test_stop_recording),
         ("Get Recordings", tester.test_get_recordings),
