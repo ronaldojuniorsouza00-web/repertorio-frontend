@@ -140,16 +140,40 @@ const RepertoireLayout = ({
                   <p className="text-blue-600">Música atual da apresentação</p>
                 </div>
               </div>
-              {nextSongs.length > 0 && (
-                <Button
-                  onClick={handleNextSong}
-                  className="bg-green-600 hover:bg-green-700 text-white shadow-lg"
-                  size="lg"
-                >
-                  <SkipForward className="w-5 h-5 mr-2" />
-                  Próxima Música
-                </Button>
-              )}
+              <div className="flex items-center space-x-3">
+                {/* Timer Automático */}
+                {isTimerActive && (
+                  <div className="flex items-center space-x-2 bg-white rounded-lg px-4 py-2 border-2 border-blue-200">
+                    <Timer className="w-5 h-5 text-blue-600" />
+                    <div className="text-center">
+                      <div className="text-lg font-bold text-blue-900">
+                        {Math.floor(timeRemaining / 60)}:{String(timeRemaining % 60).padStart(2, '0')}
+                      </div>
+                      <div className="text-xs text-blue-600">próxima automática</div>
+                    </div>
+                    <Button
+                      onClick={toggleTimer}
+                      size="sm"
+                      variant="outline"
+                      className="border-blue-200 hover:bg-blue-50"
+                    >
+                      {timerPaused ? <Play className="w-3 h-3" /> : <Pause className="w-3 h-3" />}
+                    </Button>
+                  </div>
+                )}
+
+                {/* Botão Próxima Música - MAIOR */}
+                {nextSongs.length > 0 && (
+                  <Button
+                    onClick={handleNextSong}
+                    className="bg-green-600 hover:bg-green-700 text-white shadow-xl px-8 py-4 text-lg"
+                    size="lg"
+                  >
+                    <SkipForward className="w-6 h-6 mr-3" />
+                    PULAR MÚSICA
+                  </Button>
+                )}
+              </div>
             </div>
           </CardHeader>
           
