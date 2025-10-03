@@ -29,9 +29,10 @@ mongo_url = os.environ['MONGO_URL']
 client = AsyncIOMotorClient(mongo_url)
 db = client[os.environ['DB_NAME']]
 
-# Initialize services with caching
+# Initialize music API services
 cache_service = CacheService(db)
 music_service = MusicAPIService(cache_service)
+improved_music_service = ImprovedMusicService(cache_service)
 
 # JWT Configuration
 SECRET_KEY = "music_maestro_secret_key_2025"
