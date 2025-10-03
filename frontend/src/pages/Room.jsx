@@ -1107,8 +1107,6 @@ const Room = () => {
             <div className="h-20"></div>
             </div>
           )}
-        </div>
-
           {/* Sidebar */}
           <div className="space-y-6">
             {/* Members */}
