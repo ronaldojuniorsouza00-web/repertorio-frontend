@@ -35,15 +35,9 @@ const Dashboard = () => {
       return;
     }
     
-    // Debug info
-    console.log('Creating room with data:', createRoomForm);
-    console.log('Token available:', !!token);
-    console.log('User:', user);
-    
     setLoading(true);
     try {
       const room = await api.createRoom(createRoomForm, token);
-      console.log('Room created successfully:', room);
       toast.success('Sala criada com sucesso!');
       
       // Limpar form e fechar modal
@@ -52,13 +46,10 @@ const Dashboard = () => {
       
       navigate(`/room/${room.id}`);
     } catch (error) {
-      console.error('Detailed error creating room:', error);
-      console.error('Error response:', error.response?.data);
-      console.error('Error status:', error.response?.status);
+      console.error('Error creating room:', error);
       
       if (error.response?.status === 401) {
         toast.error('Sessão expirada. Faça login novamente.');
-        // Redirecionar para login
         navigate('/auth');
       } else {
         toast.error('Erro ao criar sala. Tente novamente.');
