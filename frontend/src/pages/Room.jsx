@@ -657,14 +657,26 @@ const Room = () => {
                             data-testid="song-artist-input"
                           />
                         </div>
-                        <Button 
-                          type="submit" 
-                          className="w-full bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white"
-                          disabled={loading}
-                          data-testid="add-song-submit-button"
-                        >
-                          {loading ? 'Adicionando...' : 'Adicionar Música'}
-                        </Button>
+                        <div className="space-y-2">
+                          <Button 
+                            type="submit" 
+                            className="w-full bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white"
+                            disabled={loading}
+                            data-testid="add-song-submit-button"
+                          >
+                            {loading ? 'Buscando...' : 'Buscar Online (Spotify + Genius)'}
+                          </Button>
+                          
+                          <Button 
+                            type="button"
+                            onClick={handleAddSongEnhanced}
+                            className="w-full bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white"
+                            disabled={loading}
+                          >
+                            <Zap className="w-4 h-4 mr-2" />
+                            {loading ? 'Gerando...' : 'Busca Aprimorada (IA + Local)'}
+                          </Button>
+                        </div>
                       </form>
                     </DialogContent>
                   </Dialog>
