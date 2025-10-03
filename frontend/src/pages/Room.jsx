@@ -1085,155 +1085,23 @@ const Room = () => {
           {/* Seção de Letras - Apenas quando há música selecionada */}
           {roomData?.current_song && (
             <div className="lg:col-span-2 space-y-6">
-            {/* Current Song */}
-            {roomData.current_song ? (
-              <Card className="bg-white/90 backdrop-blur-sm border-amber-200/50 shadow-lg" data-testid="current-song-card">
-                <CardHeader className="pb-4">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <CardTitle className="text-2xl text-gray-900 flex items-center">
-                        <Play className="w-6 h-6 mr-2 text-green-600" />
-                        Tocando Agora
-                      </CardTitle>
-                      <h2 className="text-3xl font-bold text-amber-600 mt-1">
-                        {roomData.current_song.title}
-                      </h2>
-                      <p className="text-xl text-gray-600">por {roomData.current_song.artist}</p>
-                      <div className="flex items-center justify-between mt-3">
-                        <div className="flex items-center space-x-2 flex-wrap">
-                          <Badge variant="outline">Tom: {roomData.current_song.key}</Badge>
-                          <Badge variant="outline">{roomData.current_song.genre}</Badge>
-                          {roomData.current_song.tempo && (
-                            <Badge variant="outline">{roomData.current_song.tempo} BPM</Badge>
-                          )}
-                          {roomData.current_song.album && (
-                            <Badge variant="outline" className="bg-blue-50 border-blue-200 text-blue-700">
-                              📀 {roomData.current_song.album}
-                            </Badge>
-                          )}
-                          {roomData.current_song.release_date && (
-                            <Badge variant="outline" className="bg-gray-50 border-gray-200 text-gray-700">
-                              {roomData.current_song.release_date.substring(0, 4)}
-                            </Badge>
-                          )}
-                          {roomData.current_song.popularity && roomData.current_song.popularity > 0 && (
-                            <Badge variant="outline" className="bg-green-50 border-green-200 text-green-700">
-                              🔥 {roomData.current_song.popularity}%
-                            </Badge>
-                          )}
-                        </div>
-                        
-                        {isAdmin && (
-                          <Button
-                            onClick={() => {
-                              setTransposeForm({ from_key: roomData.current_song.key, to_key: '' });
-                              setShowTranspose(true);
-                            }}
-                            size="sm"
-                            variant="outline"
-                            className="border-amber-200 hover:bg-amber-50"
-                          >
-                            <RotateCcw className="w-4 h-4 mr-1" />
-                            Mudar Tom
-                          </Button>
-                        )}
-                      </div>
-                    </div>
-                  </div>
+              {/* Letras da Música Atual */}
+              <Card className="bg-white/90 backdrop-blur-sm border-amber-200/50 shadow-lg">
+                <CardHeader>
+                  <CardTitle className="text-xl text-gray-900 flex items-center">
+                    📖 Letra da Música
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <Tabs defaultValue="lyrics" className="w-full">
-                    <TabsList className="grid w-full grid-cols-2 mb-4 bg-amber-50">
-                      <TabsTrigger 
-                        value="lyrics"
-                        className="data-[state=active]:bg-amber-600 data-[state=active]:text-white"
-                      >
-                        Letra
-                      </TabsTrigger>
-                      <TabsTrigger 
-                        value="chords"
-                        className="data-[state=active]:bg-amber-600 data-[state=active]:text-white"
-                      >
-                        Acordes
-                      </TabsTrigger>
-                    </TabsList>
-                    
-                    <TabsContent value="lyrics" className="mt-4">
-                      <SimpleLetrasDisplay
-                        lyrics={roomData.current_song.lyrics}
-                        bpm={currentSongTempo || roomData.current_song.bpm || 120}
-                        fontSize={fontSize}
-                        onTempoChange={handleTempoChange}
-                        roomId={roomId}
-                      />
-                      
-                      {/* Song Info */}
-                      <div className="mt-4 space-y-3">
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center space-x-3">
-                            <Badge 
-                              variant="outline" 
-                              className="bg-blue-50 border-blue-200 text-blue-700 flex items-center"
-                            >
-                              <Gauge className="w-3 h-3 mr-1" />
-                              {currentSongTempo || roomData.current_song.bpm || 120} BPM
-                            </Badge>
-                            
-                            {roomData.current_song.source && (
-                              <Badge variant="outline" className="bg-purple-50 border-purple-200 text-purple-700">
-                                {roomData.current_song.source === 'ai_generated' ? '🤖 IA' : 
-                                 roomData.current_song.source === 'local_database' ? '📚 Local' : 
-                                 '🌐 Online'}
-                              </Badge>
-                            )}
-                          </div>
-                          
-                          {roomData.current_song.preview_url && (
-                            <audio 
-                              controls 
-                              preload="metadata"
-                              className="h-8"
-                            >
-                              <source src={roomData.current_song.preview_url} type="audio/mpeg" />
-                              Seu navegador não suporta áudio.
-                            </audio>
-                          )}
-                        </div>
-                        
-                        {roomData.current_song.genre && (
-                          <Badge variant="outline" className="bg-green-50 border-green-200 text-green-700">
-                            🎼 {roomData.current_song.genre}
-                          </Badge>
-                        )}
-                      </div>
-                    </TabsContent>
-                    
-                    <TabsContent value="chords" className="mt-4">
-                      <div className="chord-display bg-gray-50 p-6 rounded-lg max-h-96 overflow-y-auto">
-                        <pre 
-                          className="whitespace-pre-wrap font-mono text-gray-800 leading-relaxed"
-                          style={{ fontSize: `${fontSize}px`, lineHeight: '1.6' }}
-                        >
-                          {roomData.current_song.chords}
-                        </pre>
-                      </div>
-                    </TabsContent>
-                    
-                    {/* Instrument-specific notation tab removed - collaborative system doesn't need individual instruments */}
-                  </Tabs>
+                  <SimpleLetrasDisplay
+                    lyrics={roomData.current_song.lyrics}
+                    bpm={currentSongTempo || roomData.current_song.bpm || 120}
+                    fontSize={fontSize}
+                    onTempoChange={handleTempoChange}
+                    roomId={roomId}
+                  />
                 </CardContent>
               </Card>
-            ) : (
-              <Card className="bg-white/90 backdrop-blur-sm border-amber-200/50 shadow-lg">
-                <CardContent className="py-16 text-center">
-                  <Music className="w-16 h-16 mx-auto mb-4 text-gray-400" />
-                  <h3 className="text-xl font-semibold text-gray-600 mb-2">Nenhuma música selecionada</h3>
-                  <p className="text-gray-500">
-                    {isAdmin ? 'Adicione uma música para começar' : 'Aguarde o admin selecionar uma música'}
-                  </p>
-                </CardContent>
-              </Card>
-            )}
 
             {/* Spacer for fixed next song bar */}
             <div className="h-20"></div>
