@@ -427,6 +427,211 @@ class MusicMaestroAPITester:
             return True
         return False
 
+    # NEW FUNCTIONALITY TESTS
+    def test_enhanced_search(self):
+        """Test enhanced search with AI fallback"""
+        test_songs = [
+            {"title": "Imagine", "artist": "John Lennon"},
+            {"title": "Yesterday", "artist": "The Beatles"},
+            {"title": "Let It Be", "artist": "The Beatles"}
+        ]
+        
+        all_passed = True
+        self.enhanced_song_ids = []
+        
+        for song_data in test_songs:
+            success, response = self.run_test(
+                f"Enhanced Search - {song_data['title']}",
+                "POST",
+                "songs/search-enhanced",
+                200,
+                data=song_data
+            )
+            
+            if success and 'id' in response:
+                self.enhanced_song_ids.append(response['id'])
+                print(f"   Found song with enhanced search: {response['title']} by {response['artist']}")
+                print(f"   Has lyrics: {'Yes' if response.get('lyrics') else 'No'}")
+                print(f"   Has chords: {'Yes' if response.get('chords') else 'No'}")
+            else:
+                all_passed = False
+                
+        return all_passed
+
+    def test_save_repertoire(self):
+        """Test saving current repertoire to history"""
+        if not self.room_id or not hasattr(self, 'enhanced_song_ids') or not self.enhanced_song_ids:
+            return False
+            
+        repertoire_data = {
+            "name": f"Test Repertoire {int(time.time())}",
+            "song_ids": self.enhanced_song_ids[:2]  # Use first 2 songs
+        }
+        
+        success, response = self.run_test(
+            "Save Repertoire to History",
+            "POST",
+            f"rooms/{self.room_id}/repertoire/save",
+            200,
+            data=repertoire_data
+        )
+        
+        if success and 'repertoire_id' in response:
+            self.repertoire_id = response['repertoire_id']
+            print(f"   Saved repertoire with {len(repertoire_data['song_ids'])} songs")
+            return True
+        return False
+
+    def test_get_repertoire_history(self):
+        """Test getting repertoire history"""
+        if not self.room_id:
+            return False
+            
+        success, response = self.run_test(
+            "Get Repertoire History",
+            "GET",
+            f"rooms/{self.room_id}/repertoire/history",
+            200
+        )
+        
+        if success and 'repertoires' in response:
+            print(f"   Found {len(response['repertoires'])} repertoires in history")
+            return True
+        return False
+
+    def test_load_repertoire(self):
+        """Test loading repertoire from history"""
+        if not self.room_id or not hasattr(self, 'repertoire_id'):
+            return False
+            
+        success, response = self.run_test(
+            "Load Repertoire from History",
+            "POST",
+            f"rooms/{self.room_id}/repertoire/{self.repertoire_id}/load",
+            200
+        )
+        
+        if success and 'song_count' in response:
+            print(f"   Loaded repertoire with {response['song_count']} songs")
+            return True
+        return False
+
+    def test_speed_control(self):
+        """Test speed/tempo control"""
+        if not self.room_id:
+            return False
+            
+        # Test increasing tempo
+        speed_data = {"tempo_change": 10}  # +10 BPM
+        
+        success, response = self.run_test(
+            "Increase Room Tempo",
+            "POST",
+            f"rooms/{self.room_id}/speed/adjust",
+            200,
+            data=speed_data
+        )
+        
+        if not success:
+            return False
+            
+        print(f"   Increased tempo to {response.get('new_tempo', 'unknown')} BPM")
+        
+        # Test decreasing tempo
+        speed_data = {"tempo_change": -15}  # -15 BPM
+        
+        success, response = self.run_test(
+            "Decrease Room Tempo",
+            "POST",
+            f"rooms/{self.room_id}/speed/adjust",
+            200,
+            data=speed_data
+        )
+        
+        if success:
+            print(f"   Decreased tempo to {response.get('new_tempo', 'unknown')} BPM")
+            return True
+        return False
+
+    def test_fast_repertoire_generation(self):
+        """Test fast AI repertoire generation with caching"""
+        if not self.room_id:
+            return False
+            
+        repertoire_data = {
+            "genre": "rock",
+            "song_count": 5
+        }
+        
+        success, response = self.run_test(
+            "Fast Repertoire Generation",
+            "POST",
+            f"rooms/{self.room_id}/generate-repertoire-fast",
+            200,
+            data=repertoire_data
+        )
+        
+        if success and 'songs' in response:
+            print(f"   Generated {response.get('count', 0)} songs quickly")
+            print(f"   Sample songs: {[song.get('title', 'Unknown') for song in response['songs'][:3]]}")
+            return True
+        return False
+
+    def test_delete_repertoire(self):
+        """Test deleting repertoire from history"""
+        if not self.room_id or not hasattr(self, 'repertoire_id'):
+            return False
+            
+        success, response = self.run_test(
+            "Delete Repertoire from History",
+            "DELETE",
+            f"rooms/{self.room_id}/repertoire/{self.repertoire_id}",
+            200
+        )
+        
+        if success:
+            print(f"   Repertoire deleted from history")
+            return True
+        return False
+
+    def test_add_songs_to_playlist(self):
+        """Test adding songs to room playlist"""
+        if not self.room_id or not hasattr(self, 'enhanced_song_ids') or not self.enhanced_song_ids:
+            return False
+            
+        all_passed = True
+        for song_id in self.enhanced_song_ids[:2]:  # Add first 2 songs
+            success, response = self.run_test(
+                f"Add Song to Playlist",
+                "POST",
+                f"rooms/{self.room_id}/playlist/add/{song_id}",
+                200
+            )
+            
+            if success:
+                print(f"   Added song to playlist (total: {response.get('playlist_length', 'unknown')})")
+            else:
+                all_passed = False
+                
+        return all_passed
+
+    def test_get_playlist(self):
+        """Test getting room playlist"""
+        if not self.room_id:
+            return False
+            
+        success, response = self.run_test(
+            "Get Room Playlist",
+            "GET",
+            f"rooms/{self.room_id}/playlist",
+            200
+        )
+        
+        if success and 'playlist' in response:
+            print(f"   Playlist has {len(response['playlist'])} songs")
+            return True
+        return False
+
 def main():
     print("🎵 Music Maestro API Testing Suite")
     print("=" * 50)
