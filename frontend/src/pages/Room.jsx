@@ -1071,9 +1071,20 @@ const Room = () => {
       </header>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid lg:grid-cols-3 gap-8">
-          {/* Main Content - Current Song */}
-          <div className="lg:col-span-2 space-y-6">
+        {/* Novo Layout do Repertório - Música Atual em Destaque + Próximas */}
+        <RepertoireLayout
+          roomId={roomId}
+          currentSong={roomData?.current_song}
+          playlist={playlist}
+          onSongChange={handleSetCurrentSong}
+          onNextSong={handleNextSong}
+          fontSize={fontSize}
+        />
+
+        <div className="grid lg:grid-cols-3 gap-8 mt-8">
+          {/* Seção de Letras - Apenas quando há música selecionada */}
+          {roomData?.current_song && (
+            <div className="lg:col-span-2 space-y-6">
             {/* Current Song */}
             {roomData.current_song ? (
               <Card className="bg-white/90 backdrop-blur-sm border-amber-200/50 shadow-lg" data-testid="current-song-card">
