@@ -255,10 +255,7 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Enhanced Search System with AI Fallback"
-    - "Repertoire History Management"
-    - "Real-time Speed Control"
-    - "Fast AI Repertoire Generation"
+    - "Automatic Timer System with Large Skip Button"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
