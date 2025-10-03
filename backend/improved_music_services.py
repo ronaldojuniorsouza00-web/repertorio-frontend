@@ -263,6 +263,40 @@ class ImprovedMusicService:
             # Fallback: criar letra básica inspirada no título
             return self._create_basic_inspired_lyrics(text)
     
+    def _create_basic_inspired_lyrics(self, title_or_text: str) -> str:
+        """
+        Cria letras básicas inspiradas no título quando a IA não consegue gerar
+        """
+        return f"""Verso 1:
+Esta é uma canção sobre {title_or_text.lower()}
+Cada nota que toca, cada som que vem
+A música nos une, nos faz sonhar
+Com melodias que fazem o coração vibrar
+
+Refrão:
+{title_or_text}, {title_or_text}
+A música que nos inspira a viver
+{title_or_text}, {title_or_text}  
+Juntos vamos cantar e nos emocionar
+
+Verso 2:
+Cada acorde conta uma história nova
+Cada ritmo leva nossa alma embora
+A banda toca junto, em harmonia
+Criando momentos de pura magia
+
+Refrão:
+{title_or_text}, {title_or_text}
+A música que nos inspira a viver
+{title_or_text}, {title_or_text}
+Juntos vamos cantar e nos emocionar
+
+Ponte:
+E quando a música toca
+Todo mundo se emociona
+É a força da canção
+Que mexe com o coração"""
+    
     def _create_fallback_song(self, title: str, artist: str) -> Dict[str, Any]:
         """
         Cria uma música básica como último recurso
