@@ -45,7 +45,7 @@ const RepertoireLayout = ({
 
   // Timer automático para trocar música
   useEffect(() => {
-    if (currentSong && currentSong.duration && playlist.length > 1 && !timerPaused) {
+    if (currentSong && currentSong.duration && playlist.length > 1 && !timerPaused && autoAdvanceEnabled) {
       const duration = currentSong.duration; // em segundos
       setTimeRemaining(duration);
       setIsTimerActive(true);
