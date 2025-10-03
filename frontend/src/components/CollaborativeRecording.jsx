@@ -216,21 +216,59 @@ const CollaborativeRecording = ({ roomId, isOpen, onClose }) => {
   };
 
   const playRecordingAudio = (recordingId) => {
-    // In a real implementation, you would load and play the actual audio file
-    // For now, we'll just simulate the play state
+    // Simular reprodução de áudio para demonstração
+    const audioElement = audioElementsRef.current[recordingId];
+    if (audioElement) {
+      // Create a simple tone to simulate playback
+      audioElement.play().catch(e => console.log('Audio play error:', e));
+    } else {
+      // Criar áudio de demonstração
+      createDemoAudio(recordingId);
+    }
     console.log('Playing recording:', recordingId);
   };
 
   const pauseRecordingAudio = (recordingId) => {
-    // In a real implementation, you would pause the actual audio
+    const audioElement = audioElementsRef.current[recordingId];
+    if (audioElement) {
+      audioElement.pause();
+    }
     console.log('Pausing recording:', recordingId);
   };
 
   const updateRecordingVolume = (recordingId, volume) => {
-    // In a real implementation, you would update the actual audio element volume
     const audioElement = audioElementsRef.current[recordingId];
     if (audioElement) {
       audioElement.volume = volume;
+    }
+  };
+
+  const createDemoAudio = (recordingId) => {
+    // Criar um áudio de demonstração simples
+    try {
+      const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      const oscillator = audioContext.createOscillator();
+      const gainNode = audioContext.createGain();
+      
+      oscillator.connect(gainNode);
+      gainNode.connect(audioContext.destination);
+      
+      oscillator.frequency.setValueAtTime(440, audioContext.currentTime); // A4 note
+      gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+      
+      oscillator.start();
+      
+      // Parar após 2 segundos
+      setTimeout(() => {
+        oscillator.stop();
+        setPlayingRecordings(prev => {
+          const newSet = new Set(prev);
+          newSet.delete(recordingId);
+          return newSet;
+        });
+      }, 2000);
+    } catch (error) {
+      console.log('Demo audio error:', error);
     }
   };
 
