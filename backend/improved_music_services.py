@@ -48,27 +48,27 @@ class ImprovedMusicService:
             [C]And the world will be as [G]one
             """,
             "yesterday": """
-            Yesterday, all my troubles seemed so far away
-            Now it looks as though they're here to stay
-            Oh, I believe in yesterday
+            [F]Yesterday, all my [Em]troubles seemed so [A]far a[Dm]way
+            [Bb]Now it looks as [C]though they're here to [F]stay
+            Oh, [Dm]I be[G]lieve in [Bb]yester[F]day
             
-            Suddenly, I'm not half the man I used to be
-            There's a shadow hanging over me
-            Oh, yesterday came suddenly
+            [F]Suddenly, [Em]I'm not [A]half the man I [Dm]used to be
+            [Bb]There's a shadow [C]hanging over [F]me
+            Oh, [Dm]yester[G]day came [Bb]sudden[F]ly
             
-            Why she had to go I don't know, she wouldn't say
-            I said something wrong, now I long for yesterday
+            [Em]Why she [A]had to [Dm]go I don't know, she [C]wouldn't [Dm]say
+            [Em]I said [A]something [Dm]wrong, now I [Bb]long for [F]yesterday
             
-            Yesterday, love was such an easy game to play
-            Now I need a place to hide away
-            Oh, I believe in yesterday
+            [F]Yesterday, [Em]love was such an [A]easy game to [Dm]play
+            [Bb]Now I need a [C]place to hide a[F]way
+            Oh, [Dm]I be[G]lieve in [Bb]yester[F]day
             
-            Why she had to go I don't know, she wouldn't say
-            I said something wrong, now I long for yesterday
+            [Em]Why she [A]had to [Dm]go I don't know, she [C]wouldn't [Dm]say
+            [Em]I said [A]something [Dm]wrong, now I [Bb]long for [F]yesterday
             
-            Yesterday, love was such an easy game to play
-            Now I need a place to hide away
-            Oh, I believe in yesterday
+            [F]Yesterday, [Em]love was such an [A]easy game to [Dm]play
+            [Bb]Now I need a [C]place to hide a[F]way
+            Oh, [Dm]I be[G]lieve in [Bb]yester[F]day
             """,
             "let_it_be": """
             When I find myself in times of trouble
