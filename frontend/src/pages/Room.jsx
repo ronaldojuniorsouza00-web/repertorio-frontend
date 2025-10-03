@@ -54,10 +54,12 @@ const Room = () => {
   const [showTranspose, setShowTranspose] = useState(false);
   const [showAIRepertoire, setShowAIRepertoire] = useState(false);
   const [showCollaborativeRecording, setShowCollaborativeRecording] = useState(false);
+  const [showRepertoireHistory, setShowRepertoireHistory] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [recommendations, setRecommendations] = useState([]);
   const [realTimeUpdates, setRealTimeUpdates] = useState([]);
   const [presentationMode, setPresentationMode] = useState(false);
+  const [currentSongTempo, setCurrentSongTempo] = useState(120);
   // New settings states
   const [currentTempo, setCurrentTempo] = useState(120);
   const [fontSize, setFontSize] = useState(16);
