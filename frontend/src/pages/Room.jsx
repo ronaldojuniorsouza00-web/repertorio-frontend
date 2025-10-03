@@ -559,17 +559,7 @@ const Room = () => {
             </div>
             
             <div className="flex items-center space-x-3">
-              {/* Collaborative Recording */}
-              <Button 
-                onClick={() => setShowCollaborativeRecording(true)}
-                variant="outline"
-                size="sm"
-                className="border-purple-200 hover:bg-purple-50 text-purple-600"
-                data-testid="collaborative-recording-button"
-              >
-                <Users className="w-4 h-4 mr-2" />
-                Gravações
-              </Button>
+              {/* Gravação removida - foco no repertório */}
 
               {/* Repertoire History */}
               <Button 
