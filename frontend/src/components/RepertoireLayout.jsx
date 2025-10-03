@@ -40,6 +40,44 @@ const RepertoireLayout = ({
     }
   }, [playlist, roomId]);
 
+  // Timer automático para trocar música
+  useEffect(() => {
+    if (currentSong && currentSong.duration && playlist.length > 1 && !timerPaused) {
+      const duration = currentSong.duration; // em segundos
+      setTimeRemaining(duration);
+      setIsTimerActive(true);
+      
+      timerRef.current = setInterval(() => {
+        setTimeRemaining(prev => {
+          if (prev <= 1) {
+            // Tempo acabou, passar para próxima música automaticamente
+            handleNextSong();
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    } else {
+      setIsTimerActive(false);
+      setTimeRemaining(0);
+    }
+
+    return () => {
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+      }
+    };
+  }, [currentSong, playlist.length, timerPaused]);
+
+  const toggleTimer = () => {
+    setTimerPaused(!timerPaused);
+    if (timerPaused) {
+      toast.success('Timer automático reativado');
+    } else {
+      toast.info('Timer automático pausado');
+    }
+  };
+
   const loadTransitionChords = async () => {
     try {
       setLoadingTransitions(true);
