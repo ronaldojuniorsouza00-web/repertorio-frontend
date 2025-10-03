@@ -23,7 +23,9 @@ import {
   RotateCcw,
   Sparkles,
   Settings,
+  History,
   Zap,
+  Gauge,
   Type
 } from 'lucide-react';
 import { toast } from 'sonner';
