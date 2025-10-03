@@ -439,7 +439,7 @@ const Room = () => {
     }
   };
 
-  const handleTempoChange = (value) => {
+  const handleTempoSliderChange = (value) => {
     const newTempo = value[0];
     setCurrentTempo(newTempo);
     updateSettings({ tempo: newTempo });
