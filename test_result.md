@@ -231,8 +231,10 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Remove instrument selection system"
-    - "Implement collaborative recording system"
+    - "Enhanced Search System with AI Fallback"
+    - "Repertoire History Management"
+    - "Real-time Speed Control"
+    - "Fast AI Repertoire Generation"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
