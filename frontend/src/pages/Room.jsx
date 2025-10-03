@@ -37,6 +37,7 @@ import RecommendationsDialog from '../components/RecommendationsDialog';
 import NextSongBar from '../components/NextSongBar';
 import SimpleLetrasDisplay from '../components/SimpleLetrasDisplay';
 import RepertoireHistory from '../components/RepertoireHistory';
+import RepertoireLayout from '../components/RepertoireLayout';
 import { SmartLoading } from '../components/LoadingStates';
 
 const Room = () => {
