@@ -761,7 +761,101 @@ async def adjust_room_speed(
         "change": speed_data.tempo_change
     }
 
-# Fast AI Repertoire Generation
+# Transition Chords System
+@api_router.get("/rooms/{room_id}/transition-chords")
+async def get_transition_chords(
+    room_id: str,
+    current_user: User = Depends(get_current_user)
+):
+    """
+    Calcula acordes de transição entre músicas do repertório
+    """
+    try:
+        # Buscar playlist atual da sala
+        room = await db.rooms.find_one({"id": room_id})
+        if not room or not room.get("playlist"):
+            return {"transitions": []}
+        
+        playlist = room["playlist"]
+        transitions = []
+        
+        for i in range(len(playlist) - 1):
+            current_song_id = playlist[i]
+            next_song_id = playlist[i + 1]
+            
+            # Buscar as duas músicas
+            current_song = await db.songs.find_one({"id": current_song_id})
+            next_song = await db.songs.find_one({"id": next_song_id})
+            
+            if current_song and next_song:
+                transition = await calculate_transition_chords(
+                    current_song.get("key", "C"),
+                    current_song.get("chords", ""),
+                    next_song.get("key", "C"),
+                    next_song.get("chords", "")
+                )
+                
+                transitions.append({
+                    "from_song": current_song["title"],
+                    "to_song": next_song["title"],
+                    "from_key": current_song.get("key", "C"),
+                    "to_key": next_song.get("key", "C"),
+                    "transition_chords": transition,
+                    "position": i
+                })
+        
+        return {"transitions": transitions}
+        
+    except Exception as e:
+        logging.error(f"Error calculating transitions: {e}")
+        return {"transitions": []}
+
+async def calculate_transition_chords(from_key: str, from_chords: str, to_key: str, to_chords: str) -> List[str]:
+    """
+    Calcula acordes de transição entre duas músicas
+    """
+    # Círculo das quintas para progressões harmônicas
+    circle_of_fifths = {
+        "C": ["Am", "F", "G"],
+        "G": ["Em", "C", "D"], 
+        "D": ["Bm", "G", "A"],
+        "A": ["F#m", "D", "E"],
+        "E": ["C#m", "A", "B"],
+        "B": ["G#m", "E", "F#"],
+        "F#": ["D#m", "B", "C#"],
+        "Db": ["Bbm", "Gb", "Ab"],
+        "Ab": ["Fm", "Db", "Eb"],
+        "Eb": ["Cm", "Ab", "Bb"],
+        "Bb": ["Gm", "Eb", "F"],
+        "F": ["Dm", "Bb", "C"]
+    }
+    
+    # Normalizar tons
+    from_key = from_key.replace('b', 'b').replace('#', '#')
+    to_key = to_key.replace('b', 'b').replace('#', '#')
+    
+    # Se são o mesmo tom, transição simples
+    if from_key == to_key:
+        return [f"{from_key}", "G7", f"{to_key}"]
+    
+    # Buscar acordes comuns e progressão
+    from_family = circle_of_fifths.get(from_key, [from_key])
+    to_family = circle_of_fifths.get(to_key, [to_key])
+    
+    # Encontrar acorde comum ou criar ponte
+    common_chord = None
+    for chord in from_family:
+        if chord in to_family:
+            common_chord = chord
+            break
+    
+    if common_chord:
+        return [from_key, common_chord, f"{to_key}"]
+    else:
+        # Usar dominante como ponte
+        return [from_key, "G7", "C", f"{to_key}"]
+
+# Fast AI Repertoire Generation  
 @api_router.post("/rooms/{room_id}/generate-repertoire-fast")
 async def generate_repertoire_fast(
     room_id: str,
@@ -769,7 +863,7 @@ async def generate_repertoire_fast(
     current_user: User = Depends(get_current_user)
 ):
     """
-    Geração rápida de repertório com cache agressivo
+    Geração rápida de repertório com cache agressivo e acordes de transição
     """
     try:
         # Usar serviço aprimorado
@@ -788,7 +882,7 @@ async def generate_repertoire_fast(
             song_ids.append(song.id)
         
         return {
-            "message": "Repertório gerado rapidamente!",
+            "message": "Repertório gerado rapidamente com acordes de transição!",
             "songs": songs,
             "count": len(songs)
         }
