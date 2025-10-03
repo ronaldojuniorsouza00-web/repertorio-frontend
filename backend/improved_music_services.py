@@ -183,11 +183,18 @@ class ImprovedMusicService:
             message = UserMessage(text=f"""
             Preciso de informações sobre a música "{title}" do artista "{artist}".
             
+            IMPORTANTE: Na letra, inclua as cifras (acordes) integradas usando colchetes, como [C], [F], [G].
+            Posicione os acordes acima das palavras onde a mudança deve acontecer.
+            
+            Exemplo de formato:
+            [C]When I find my[G]self in times of [Am]trouble
+            [F]Mother Mary [C]comes to me
+            
             Forneça no seguinte formato JSON:
             {{
                 "title": "Título da música",
                 "artist": "Nome do artista",
-                "lyrics": "Letra completa da música em português ou inglês",
+                "lyrics": "Letra completa COM CIFRAS integradas usando colchetes [C], [F], [G] etc",
                 "chords": "Sequência de acordes principais (ex: C F G Am)",
                 "genre": "Gênero musical",
                 "key": "Tom da música (ex: C, G, F)",
@@ -196,7 +203,7 @@ class ImprovedMusicService:
                 "source": "ai_generated"
             }}
             
-            Se a música existir na vida real, use as informações reais. Caso contrário, crie uma música inspirada no título/artista.
+            Se a música existir na vida real, use as informações reais com cifras corretas.
             """)
             
             response = await chat.send_message(message)
