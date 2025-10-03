@@ -245,6 +245,58 @@ export const api = {
       headers: { Authorization: `Bearer ${token}` }
     });
     return response.data;
+  },
+
+  // Enhanced Search
+  searchSongEnhanced: async (songForm, token) => {
+    const response = await axios.post(`${API}/songs/search-enhanced`, songForm, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    return response.data;
+  },
+
+  // Repertoire History Management
+  saveRepertoire: async (roomId, repertoireData, token) => {
+    const response = await axios.post(`${API}/rooms/${roomId}/repertoire/save`, repertoireData, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    return response.data;
+  },
+  getRepertoireHistory: async (roomId, token) => {
+    const response = await axios.get(`${API}/rooms/${roomId}/repertoire/history`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    return response.data;
+  },
+  loadRepertoire: async (roomId, repertoireId, token) => {
+    const response = await axios.post(`${API}/rooms/${roomId}/repertoire/${repertoireId}/load`, {}, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    return response.data;
+  },
+  deleteRepertoire: async (roomId, repertoireId, token) => {
+    const response = await axios.delete(`${API}/rooms/${roomId}/repertoire/${repertoireId}`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    return response.data;
+  },
+
+  // Speed Control
+  adjustRoomSpeed: async (roomId, tempoChange, token) => {
+    const response = await axios.post(`${API}/rooms/${roomId}/speed/adjust`, { 
+      tempo_change: tempoChange 
+    }, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    return response.data;
+  },
+
+  // Fast Repertoire Generation
+  generateRepertoireFast: async (roomId, repertoireData, token) => {
+    const response = await axios.post(`${API}/rooms/${roomId}/generate-repertoire-fast`, repertoireData, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    return response.data;
   }
 };
 
