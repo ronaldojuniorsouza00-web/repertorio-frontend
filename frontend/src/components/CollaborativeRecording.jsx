@@ -413,30 +413,48 @@ const CollaborativeRecording = ({ roomId, isOpen, onClose }) => {
                       </div>
                       
                       <div className="flex items-center space-x-2">
-                        {/* Play/Pause Button */}
+                        {/* Play/Pause Button - Mais Destaque */}
                         <Button
                           onClick={() => togglePlayback(recording)}
-                          size="sm"
+                          size="lg"
                           variant={playingRecordings.has(recording.id) ? "default" : "outline"}
                           className={playingRecordings.has(recording.id) ? 
-                            "bg-green-600 hover:bg-green-700" : 
-                            "border-green-200 hover:bg-green-50 text-green-600"
+                            "bg-green-600 hover:bg-green-700 text-white shadow-lg" : 
+                            "border-green-300 hover:bg-green-50 text-green-700 shadow-md"
                           }
                         >
                           {playingRecordings.has(recording.id) ? (
-                            <Pause className="w-4 h-4" />
+                            <>
+                              <Pause className="w-5 h-5 mr-2" />
+                              Pausar
+                            </>
                           ) : (
-                            <Play className="w-4 h-4" />
+                            <>
+                              <Play className="w-5 h-5 mr-2" />
+                              Reproduzir
+                            </>
                           )}
                         </Button>
                         
-                        {/* Delete Button (only for own recordings or admin) */}
+                        {/* Download Button */}
+                        <Button
+                          onClick={() => console.log('Download recording:', recording.id)}
+                          size="sm"
+                          variant="outline"
+                          className="border-blue-200 hover:bg-blue-50 text-blue-600"
+                          title="Baixar gravação"
+                        >
+                          <Download className="w-4 h-4" />
+                        </Button>
+                        
+                        {/* Delete Button (only for own recordings) */}
                         {recording.user_id === user.id && (
                           <Button
                             onClick={() => deleteRecording(recording.id)}
                             size="sm"
                             variant="outline"
                             className="border-red-200 hover:bg-red-50 text-red-600"
+                            title="Excluir gravação"
                           >
                             <Trash2 className="w-4 h-4" />
                           </Button>
