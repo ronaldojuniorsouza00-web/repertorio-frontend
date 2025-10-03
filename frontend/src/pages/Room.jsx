@@ -144,6 +144,8 @@ const Room = () => {
       socketService.removeListener('user_left', handleUserLeft);
       socketService.removeListener('song_changed', handleSongChanged);
       socketService.removeListener('transpose_changed', handleTransposeChanged);
+      socketService.removeListener('playlist_loaded', handlePlaylistLoaded);
+      socketService.removeListener('tempo_changed', handleTempoChanged);
     };
   }, [roomId, user]);
 
