@@ -36,7 +36,7 @@ import AudioRecognition from '../components/AudioRecognition';
 import RecommendationsDialog from '../components/RecommendationsDialog';
 import NextSongBar from '../components/NextSongBar';
 import CollaborativeRecording from '../components/CollaborativeRecording';
-import SimpleLyricsDisplay from '../components/SimpleLyricsDisplay';
+import SimpleLetrasDisplay from '../components/SimpleLetrasDisplay';
 import RepertoireHistory from '../components/RepertoireHistory';
 import { SmartLoading } from '../components/LoadingStates';
 
