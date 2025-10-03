@@ -18,6 +18,7 @@ import asyncio
 import json
 import re
 from music_services import MusicAPIService
+from improved_music_services import ImprovedMusicService
 from cache_service import CacheService
 
 ROOT_DIR = Path(__file__).parent
