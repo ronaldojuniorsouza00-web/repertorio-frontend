@@ -153,6 +153,19 @@ class SocketService {
     }
   }
 
+  // Repertoire Events
+  onPlaylistLoaded(callback) {
+    if (this.socket) {
+      this.socket.on('playlist_loaded', callback);
+    }
+  }
+
+  onTempoChanged(callback) {
+    if (this.socket) {
+      this.socket.on('tempo_changed', callback);
+    }
+  }
+
   // Remove listeners
   removeListener(event, callback) {
     if (this.socket) {
