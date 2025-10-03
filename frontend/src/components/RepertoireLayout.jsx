@@ -33,6 +33,8 @@ const RepertoireLayout = ({
   const [timeRemaining, setTimeRemaining] = useState(0);
   const [isTimerActive, setIsTimerActive] = useState(false);
   const [timerPaused, setTimerPaused] = useState(false);
+  const [autoAdvanceEnabled, setAutoAdvanceEnabled] = useState(true);
+  const [showTimerSettings, setShowTimerSettings] = useState(false);
   const timerRef = React.useRef(null);
 
   useEffect(() => {
