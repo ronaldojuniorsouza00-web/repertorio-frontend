@@ -39,10 +39,15 @@ const Dashboard = () => {
     try {
       const room = await api.createRoom(createRoomForm, token);
       toast.success('Sala criada com sucesso!');
+      
+      // Limpar form e fechar modal
+      setCreateRoomForm({ name: '' });
+      setShowCreateRoom(false);
+      
       navigate(`/room/${room.id}`);
     } catch (error) {
       console.error('Error creating room:', error);
-      toast.error('Erro ao criar sala');
+      toast.error('Erro ao criar sala. Tente novamente.');
     } finally {
       setLoading(false);
     }
