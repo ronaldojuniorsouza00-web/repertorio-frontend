@@ -1105,7 +1105,9 @@ const Room = () => {
 
             {/* Spacer for fixed next song bar */}
             <div className="h-20"></div>
-          </div>
+            </div>
+          )}
+        </div>
 
           {/* Sidebar */}
           <div className="space-y-6">
